@@ -111,6 +111,7 @@ main (int argc, char *argv[])
     }
   
   tcpVariant = std::string ("ns3::") + tcpVariant;
+  
   // Select TCP variant
   if (tcpVariant.compare ("ns3::TcpWestwoodPlus") == 0)
     {

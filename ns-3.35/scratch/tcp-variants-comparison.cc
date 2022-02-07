@@ -50,15 +50,17 @@
 #include "ns3/flow-monitor-helper.h"
 #include "ns3/ipv4-global-routing-helper.h"
 #include "ns3/traffic-control-module.h"
+#include "ns3/packet-sink.h"
+#include "ns3/packet-sink-helper.h"
 
 using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE ("TcpVariantsComparison");
 
 static bool firstCwnd = true;
-static bool firstSshThr = true;
-static bool firstRtt = true;
-static bool firstRto = true;
+static bool firstSshThr = false;
+static bool firstRtt = false;
+static bool firstRto = false;
 static Ptr<OutputStreamWrapper> cWndStream;
 static Ptr<OutputStreamWrapper> ssThreshStream;
 static Ptr<OutputStreamWrapper> rttStream;
@@ -68,6 +70,23 @@ static Ptr<OutputStreamWrapper> nextRxStream;
 static Ptr<OutputStreamWrapper> inFlightStream;
 static uint32_t cWndValue;
 static uint32_t ssThreshValue;
+
+Ptr<PacketSink> sink;                         /* Pointer to the packet sink application */
+uint64_t lastTotalRx = 0;                     /* The value of the last total received bytes */
+std::ofstream realtimeThroughputFile;
+std::ofstream avgThptFile;
+
+void
+CalculateThroughput ()
+{
+  Time now = Simulator::Now ();                                         /* Return the simulator's virtual time. */
+  double cur = (sink->GetTotalRx () - lastTotalRx) * (double) 8 / 1e5;     /* Convert Application RX Packets to MBits. */
+  std::cout << now.GetSeconds () << "s: \t" << cur << " Mbit/s" << std::endl;
+  realtimeThroughputFile<< now.GetSeconds () << "\t" << cur<< std::endl;
+  lastTotalRx = sink->GetTotalRx ();
+  Simulator::Schedule (MilliSeconds (100), &CalculateThroughput);
+}
+
 
 
 static void
@@ -86,6 +105,7 @@ CwndTracer (uint32_t oldval, uint32_t newval)
       *ssThreshStream->GetStream () << Simulator::Now ().GetSeconds () << " " << ssThreshValue << std::endl;
     }
 }
+
 
 static void
 SsThreshTracer (uint32_t oldval, uint32_t newval)
@@ -206,18 +226,21 @@ TraceNextRx (std::string &next_rx_seq_file_name)
 
 int main (int argc, char *argv[])
 {
+  
   std::string transport_prot = "TcpWestwood";
-  double error_p = 0.0;
+  realtimeThroughputFile.open ("data/reltimeThroughput"+transport_prot);
+  avgThptFile.open ("data/avgThroughput"+transport_prot,std::ios_base::app);
+  double error_p = 0.05;
   std::string bandwidth = "2Mbps";
   std::string delay = "0.01ms";
   std::string access_bandwidth = "10Mbps";
   std::string access_delay = "45ms";
   bool tracing = true;
-  std::string prefix_file_name = "TcpVariantsComparison";
+  std::string prefix_file_name = "data/"+transport_prot;
   uint64_t data_mbytes = 0;
   uint32_t mtu_bytes = 400;
   uint16_t num_flows = 1;
-  double duration = 100.0;
+  double duration = 5.0;
   uint32_t run = 0;
   bool flow_monitor = true;
   bool pcap = true;
@@ -305,6 +328,8 @@ int main (int argc, char *argv[])
   sources.Create (num_flows);
   NodeContainer sinks;
   sinks.Create (num_flows);
+
+  
 
   // Configure the error model
   // Here we use RateErrorModel with packet error rate
@@ -406,6 +431,8 @@ int main (int argc, char *argv[])
       ApplicationContainer sinkApp = sinkHelper.Install (sinks.Get (i));
       sinkApp.Start (Seconds (start_time * i));
       sinkApp.Stop (Seconds (stop_time));
+      sink = StaticCast<PacketSink> (sinkApp.Get (0));
+      Simulator::Schedule (Seconds (start_time*(i+1)), &CalculateThroughput);
     }
 
   // Set up tracing if enabled
@@ -433,6 +460,8 @@ int main (int argc, char *argv[])
       LocalLink.EnablePcapAll (prefix_file_name, true);
     }
 
+    
+
   // Flow monitor
   FlowMonitorHelper flowHelper;
   if (flow_monitor)
@@ -443,11 +472,17 @@ int main (int argc, char *argv[])
   Simulator::Stop (Seconds (stop_time));
   Simulator::Run ();
 
+   double averageThroughput = ((sink->GetTotalRx () * 8) / (1e6 * (stop_time-start_time)));
+
+
   if (flow_monitor)
     {
       flowHelper.SerializeToXmlFile (prefix_file_name + ".flowmonitor", true, true);
     }
 
   Simulator::Destroy ();
+  realtimeThroughputFile.close();
+  std::cout << "\nAverage throughput: " << averageThroughput << " Mbit/s" << std::endl;
+  avgThptFile << error_p <<"\t" <<averageThroughput << std::endl;
   return 0;
 }
