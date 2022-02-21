@@ -1,0 +1,4 @@
+rm AvgThroughputFileVsNumFlows
+rm DeliveryRatioFileVsNumFlows
+rm DropRatioFileVsNumFlows
+rm DelayFileVsNumFlows

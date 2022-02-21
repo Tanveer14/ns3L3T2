@@ -87,7 +87,8 @@ public:
   enum ProtocolType 
   {
     WESTWOOD,
-    WESTWOODPLUS
+    WESTWOODPLUS,
+    PETRA
   };
 
   /**
@@ -99,11 +100,9 @@ public:
     TUSTIN
   };
 
-  virtual uint32_t GetSsThresh (Ptr<const TcpSocketState> tcb,
-                                uint32_t bytesInFlight);
+  virtual uint32_t GetSsThresh (Ptr<const TcpSocketState> tcb,uint32_t bytesInFlight);
 
-  virtual void PktsAcked (Ptr<TcpSocketState> tcb, uint32_t packetsAcked,
-                          const Time& rtt);
+  virtual void PktsAcked (Ptr<TcpSocketState> tcb, uint32_t packetsAcked,const Time& rtt);
 
   virtual Ptr<TcpCongestionOps> Fork ();
 
@@ -124,6 +123,7 @@ private:
   void EstimateBW (const Time& rtt, Ptr<TcpSocketState> tcb);
 
 protected:
+virtual uint32_t SlowStart (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked);
   TracedValue<double>    m_currentBW;              //!< Current value of the estimated BW
   double                 m_lastSampleBW;           //!< Last bandwidth sample
   double                 m_lastBW;                 //!< Last bandwidth sample after being filtered

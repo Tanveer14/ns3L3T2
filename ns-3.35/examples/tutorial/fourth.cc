@@ -19,6 +19,8 @@
 #include "ns3/traced-value.h"
 #include "ns3/trace-source-accessor.h"
 
+#include "ns3/core-module.h"
+
 #include <iostream>
 
 using namespace ns3;
@@ -46,6 +48,8 @@ public:
 
   MyObject () {}
   TracedValue<int32_t> m_myInt;
+  //for Trace Callback -> 
+  // TracedCallback<Ptr<int32_t>> myCallback; 
 };
 
 void
@@ -59,6 +63,5 @@ main (int argc, char *argv[])
 {
   Ptr<MyObject> myObject = CreateObject<MyObject> ();
   myObject->TraceConnectWithoutContext ("MyInteger", MakeCallback (&IntTrace));
-
   myObject->m_myInt = 1234;
 }

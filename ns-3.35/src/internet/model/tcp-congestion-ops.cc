@@ -17,6 +17,7 @@
  *
  */
 #include "tcp-congestion-ops.h"
+#include "tcp-westwood.h"
 #include "ns3/log.h"
 
 namespace ns3 {
@@ -166,9 +167,14 @@ uint32_t
 TcpNewReno::SlowStart (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked)
 {
   NS_LOG_FUNCTION (this << tcb << segmentsAcked);
+  // std::cout<<"SSSSS ....................................................\n";
+  // std::cout<<"ss called from newReno...............\n";
 
   if (segmentsAcked >= 1)
     {
+      
+      // if(tcb->original_lastRtt<=tcb->m_lastRtt && tcb->m_cWnd<tcb->m_ssThresh/2 )  tcb->m_cWnd += tcb->m_segmentSize*tcb->m_ssThresh/tcb->m_cWnd; 
+      // else 
       tcb->m_cWnd += tcb->m_segmentSize;
       NS_LOG_INFO ("In SlowStart, updated to cwnd " << tcb->m_cWnd << " ssthresh " << tcb->m_ssThresh);
       return segmentsAcked - 1;

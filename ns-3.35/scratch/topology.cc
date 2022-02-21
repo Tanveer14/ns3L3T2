@@ -144,12 +144,12 @@ MyApp::ScheduleTx (void)
     }
 }
 
-static void
-CwndChange (Ptr<OutputStreamWrapper> stream,uint32_t oldCwnd, uint32_t newCwnd)
-{
-  // NS_LOG_UNCOND (Simulator::Now ().GetSeconds () << "\t" << newCwnd);
-  *stream->GetStream()<<Simulator::Now ().GetSeconds () << "\t" << newCwnd<<std::endl;
-}
+// static void
+// CwndChange (Ptr<OutputStreamWrapper> stream,uint32_t oldCwnd, uint32_t newCwnd)
+// {
+//   // NS_LOG_UNCOND (Simulator::Now ().GetSeconds () << "\t" << newCwnd);
+//   *stream->GetStream()<<Simulator::Now ().GetSeconds () << "\t" << newCwnd<<std::endl;
+// }
 
 // static void
 // TraceCwnd (std::string cwnd_tr_file_name)
@@ -173,6 +173,7 @@ main (int argc, char *argv[])
 
   uint32_t nWifi = 4;
   uint32_t nWifiP = 4;
+  uint32_t num_half_flows = nWifi;
   bool tracing = false;
   double simulationTime=5.0;
   std::string tcpVariant = "TcpNewReno"; 
@@ -346,8 +347,8 @@ main (int argc, char *argv[])
   FlowMonitorHelper flowmonitorhelper;
   Ptr<FlowMonitor> flowmonitor = flowmonitorhelper.InstallAll();
 
-int num_half_flows = nWifi;
-  for(int i = 0; i < num_half_flows; i++) {
+
+  for(uint i = 0; i < num_half_flows; i++) {
 
 
     uint16_t sinkPort = 8000+i;
@@ -366,10 +367,10 @@ int num_half_flows = nWifi;
     app->SetStartTime (Seconds (1.));
     app->SetStopTime (Seconds (simulationTime));
 
-    AsciiTraceHelper ascii ;
-    Ptr<OutputStreamWrapper> osw=ascii.CreateFileStream("data/cwnd"+tcpVariant+std::to_string(i));
+    // AsciiTraceHelper ascii ;
+    // Ptr<OutputStreamWrapper> osw=ascii.CreateFileStream("data/cwnd"+tcpVariant+std::to_string(i));
     
-    ns3TcpSocket->TraceConnectWithoutContext ("CongestionWindow", MakeBoundCallback (&CwndChange,osw));
+    // ns3TcpSocket->TraceConnectWithoutContext ("CongestionWindow", MakeBoundCallback (&CwndChange,osw));
   }
   
 

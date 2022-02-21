@@ -71,7 +71,7 @@ main (int argc, char *argv[])
 {
   uint32_t payloadSize = 1472;                       /* Transport layer payload size in bytes. */
   std::string dataRate = "100Mbps";                  /* Application layer datarate. */
-  std::string tcpVariant = "TcpNewReno";             /* TCP variant type. */
+  std::string tcpVariant = "TcpWestwood";             /* TCP variant type. */
   std::string phyRate = "HtMcs7";                    /* Physical layer bitrate. */
   double simulationTime = 10;                        /* Simulation time in seconds. */
   bool pcapTracing = false;                          /* PCAP Tracing is enabled or not. */

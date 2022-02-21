@@ -104,7 +104,7 @@ main (int argc, char *argv[])
   ApplicationContainer clientApps = echoClient.Install (p2pNodes.Get (0));
   clientApps.Start (Seconds (2.0));
   clientApps.Stop (Seconds (10.0));
-  //why only p2pNode 0? does it mean only p2p0--csma(ncsma) communicates? only the border routers?
+
 
   Ipv4GlobalRoutingHelper::PopulateRoutingTables ();
 

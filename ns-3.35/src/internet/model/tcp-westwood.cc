@@ -57,7 +57,7 @@ TcpWestwood::GetTypeId (void)
     .AddAttribute("ProtocolType", "Use this to let the code run as Westwood or WestwoodPlus",
                   EnumValue(TcpWestwood::WESTWOOD),
                   MakeEnumAccessor(&TcpWestwood::m_pType),
-                  MakeEnumChecker(TcpWestwood::WESTWOOD, "Westwood",TcpWestwood::WESTWOODPLUS, "WestwoodPlus"))
+                  MakeEnumChecker(TcpWestwood::WESTWOOD, "Westwood",TcpWestwood::WESTWOODPLUS, "WestwoodPlus",TcpWestwood::PETRA, "Petra"))
     .AddTraceSource("EstimatedBW", "The estimated bandwidth",
                     MakeTraceSourceAccessor(&TcpWestwood::m_currentBW),
                     "ns3::TracedValueCallback::Double")
@@ -108,7 +108,7 @@ TcpWestwood::PktsAcked (Ptr<TcpSocketState> tcb, uint32_t packetsAcked,
 
   m_ackedSegments += packetsAcked;
 
-  if (m_pType == TcpWestwood::WESTWOOD)
+  if (m_pType == TcpWestwood::WESTWOOD || m_pType == TcpWestwood::PETRA)
     {
       EstimateBW (rtt, tcb);
     }
@@ -128,37 +128,53 @@ void
 TcpWestwood::EstimateBW (const Time &rtt, Ptr<TcpSocketState> tcb)
 {
   NS_LOG_FUNCTION (this);
-
+  
   NS_ASSERT (!rtt.IsZero ());
-
+  double alpha = 0.9;
+  double sample_bwe;
   m_currentBW = m_ackedSegments * tcb->m_segmentSize / rtt.GetSeconds ();
 
   if (m_pType == TcpWestwood::WESTWOOD)
     {
+      
       Time currentAck = Simulator::Now ();
       m_currentBW = m_ackedSegments * tcb->m_segmentSize / (currentAck - m_lastAck).GetSeconds ();
+      // sample_bwe = m_currentBW;//cmnt need
+      // m_currentBW = (alpha * m_lastBW) + ((1 - alpha) * sample_bwe) ;//cmnt
       m_lastAck = currentAck;
+      // m_lastSampleBW = sample_bwe;//cmnt
+      // m_lastBW = m_currentBW;//cmnt
     }
   else if (m_pType == TcpWestwood::WESTWOODPLUS)
     {
       m_currentBW = m_ackedSegments * tcb->m_segmentSize / rtt.GetSeconds ();
       m_IsCount = false;
     }
-
+  else if (m_pType == TcpWestwood::PETRA)
+  {
+    Time currentAck = Simulator::Now ();
+      m_currentBW = m_ackedSegments * tcb->m_segmentSize / (currentAck - m_lastAck).GetSeconds ();
+      sample_bwe = m_currentBW;//cmnt need
+      m_currentBW = (alpha * m_lastBW) + ((1 - alpha) * sample_bwe) ;//cmnt
+      m_lastAck = currentAck;
+      m_lastSampleBW = sample_bwe;//cmnt
+      m_lastBW = m_currentBW;//cmnt
+  }
   m_ackedSegments = 0;
   NS_LOG_LOGIC ("Estimated BW: " << m_currentBW);
 
   // Filter the BW sample
 
-  double alpha = 0.9;
+
 
   if (m_fType == TcpWestwood::NONE)
     {
     }
   else if (m_fType == TcpWestwood::TUSTIN)
     {
-      double sample_bwe = m_currentBW;
+      sample_bwe = m_currentBW;
       m_currentBW = (alpha * m_lastBW) + ((1 - alpha) * ((sample_bwe + m_lastSampleBW) / 2));
+      // m_currentBW = (alpha * m_lastBW) + ((1 - alpha) * sample_bwe) ;
       m_lastSampleBW = sample_bwe;
       m_lastBW = m_currentBW;
     }
@@ -177,6 +193,38 @@ TcpWestwood::GetSsThresh (Ptr<const TcpSocketState> tcb,
 
   return std::max (2*tcb->m_segmentSize,
                    uint32_t (m_currentBW * static_cast<double> (tcb->m_minRtt.GetSeconds ())));
+}
+
+uint32_t
+TcpWestwood::SlowStart (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked)
+{
+  NS_LOG_FUNCTION (this << tcb << segmentsAcked);
+  // std::cout<<"SSSSS ....................................................\n";
+
+  if(m_pType == TcpWestwood::PETRA)
+  {
+    if (segmentsAcked >= 1)
+    {
+      
+      if(tcb->original_lastRtt<=tcb->m_lastRtt && tcb->m_cWnd<tcb->m_ssThresh/2 )  tcb->m_cWnd += tcb->m_segmentSize*tcb->m_ssThresh/tcb->m_cWnd; 
+      else tcb->m_cWnd += tcb->m_segmentSize;
+      NS_LOG_INFO ("In SlowStart, updated to cwnd " << tcb->m_cWnd << " ssthresh " << tcb->m_ssThresh);
+      return segmentsAcked - 1;
+    }
+  }
+  else{
+    if (segmentsAcked >= 1)
+    {
+      
+      // if(tcb->original_lastRtt<=tcb->m_lastRtt && tcb->m_cWnd<tcb->m_ssThresh/2 )  tcb->m_cWnd += tcb->m_segmentSize*tcb->m_ssThresh/tcb->m_cWnd; 
+      // else 
+      tcb->m_cWnd += tcb->m_segmentSize;
+      NS_LOG_INFO ("In SlowStart, updated to cwnd " << tcb->m_cWnd << " ssthresh " << tcb->m_ssThresh);
+      return segmentsAcked - 1;
+    }
+  }
+
+  return 0;
 }
 
 Ptr<TcpCongestionOps>

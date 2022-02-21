@@ -3567,6 +3567,8 @@ TcpSocketBase::EstimateRtt (const TcpHeader& tcpHeader)
 
   if (!m.IsZero ())
     {
+      //store this m as original_lastRtt value
+      m_tcb->original_lastRtt=m;
       m_rtt->Measurement (m);                // Log the measurement
       // RFC 6298, clause 2.4
       m_rto = Max (m_rtt->GetEstimate () + Max (m_clockGranularity, m_rtt->GetVariation () * 4), m_minRto);
