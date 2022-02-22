@@ -46,6 +46,16 @@
 #include "ns3/flow-monitor-module.h"
 #include "ns3/single-model-spectrum-channel.h"
 
+#include "ns3/internet-module.h"
+#include "ns3/sixlowpan-module.h"
+#include "ns3/lr-wpan-module.h"
+#include "ns3/internet-apps-module.h"
+#include "ns3/mobility-module.h"
+#include "ns3/applications-module.h"
+#include "ns3/flow-monitor-module.h"
+#include "ns3/netanim-module.h"
+#include "ns3/single-model-spectrum-channel.h"
+
 
 
 using namespace ns3;
@@ -54,9 +64,9 @@ NS_LOG_COMPONENT_DEFINE ("Ping6WsnExample");
 
 int main (int argc, char **argv)
 {
-  bool verbose = true;
+  bool verbose = false;
   uint32_t coverage=1;
-  uint32_t nNodes=10;
+  uint32_t nNodes=100;
 
   CommandLine cmd (__FILE__);
   cmd.AddValue ("verbose", "turn on log components", verbose);
@@ -66,12 +76,12 @@ int main (int argc, char **argv)
     {
       LogComponentEnable ("Ping6WsnExample", LOG_LEVEL_INFO);
       LogComponentEnable ("Ipv6EndPointDemux", LOG_LEVEL_ALL);
-    //   LogComponentEnable ("Ipv6L3Protocol", LOG_LEVEL_ALL);
+      LogComponentEnable ("Ipv6L3Protocol", LOG_LEVEL_ALL);
       LogComponentEnable ("Ipv6StaticRouting", LOG_LEVEL_ALL);
       LogComponentEnable ("Ipv6ListRouting", LOG_LEVEL_ALL);
       LogComponentEnable ("Ipv6Interface", LOG_LEVEL_ALL);
       LogComponentEnable ("Icmpv6L4Protocol", LOG_LEVEL_ALL);
-    //   LogComponentEnable ("Ping6Application", LOG_LEVEL_ALL);
+      LogComponentEnable ("Ping6Application", LOG_LEVEL_ALL);
       LogComponentEnable ("NdiscCache", LOG_LEVEL_ALL);
       LogComponentEnable ("SixLowPanNetDevice", LOG_LEVEL_ALL);
     }
@@ -91,8 +101,12 @@ int main (int argc, char **argv)
   mobility.SetPositionAllocator("ns3::GridPositionAllocator",
                                   "MinX", DoubleValue(5.0),
                                   "MinY", DoubleValue(0.0),
+                                  // "DeltaX", DoubleValue(.5),
                                   "DeltaX", DoubleValue(.5),
+
+                                  // "DeltaY", DoubleValue(1.2),
                                   "DeltaY", DoubleValue(1.2),
+
                                   "GridWidth", UintegerValue(2),
                                   "LayoutType", StringValue("RowFirst"));
   mobility.Install(nodes);
@@ -103,7 +117,7 @@ int main (int argc, char **argv)
    Ptr<SingleModelSpectrumChannel> channel = CreateObject<SingleModelSpectrumChannel>();
   Ptr<RangePropagationLossModel> propModel = CreateObject<RangePropagationLossModel>();
   Ptr<ConstantSpeedPropagationDelayModel> delayModel = CreateObject<ConstantSpeedPropagationDelayModel>();
-  propModel->SetAttribute("MaxRange", DoubleValue(coverage * 250));
+  propModel->SetAttribute("MaxRange", DoubleValue(coverage * 50));
   channel->AddPropagationLossModel(propModel);
   channel->SetPropagationDelayModel(delayModel);
 
@@ -162,8 +176,8 @@ int main (int argc, char **argv)
     sinkApp.Start (Seconds (0.0));
     serverApp.Start (Seconds (1.0));
 
-    sinkApp.Stop (Seconds (10.0));
-    serverApp.Stop (Seconds (10.0));
+    sinkApp.Stop (Seconds (simulationTime));
+    serverApp.Stop (Seconds (simulationTime+10));
 
 }
 
@@ -172,15 +186,160 @@ int main (int argc, char **argv)
 
    FlowMonitorHelper flowmonitorhelper;
   Ptr<FlowMonitor> flowmonitor = flowmonitorhelper.InstallAll();
-    AsciiTraceHelper ascii;
-  lrWpanHelper.EnableAsciiAll (ascii.CreateFileStream ("ping6wsn.tr"));
-  lrWpanHelper.EnablePcapAll (std::string ("ping6wsn"), true);
 
+  Simulator::Stop (Seconds (simulationTime+10));
 
-  Simulator::Stop (Seconds (simulationTime + 1));
-
+  NS_LOG_INFO ("Run Simulation.");
   Simulator::Run ();
   flowmonitor->SerializeToXmlFile("TopologyForTaskALowRate.xml", true, true);
+
+  int j = 0;
+  float AvgThroughput = 0;
+  int SentPackets=0,ReceivedPackets=0,LostPackets=0;
+  Time Jitter;
+  Time Delay;
+
+  Ptr<Ipv6FlowClassifier> classifier = DynamicCast<Ipv6FlowClassifier>(flowmonitorhelper.GetClassifier6());
+  std::map<FlowId, FlowMonitor::FlowStats> stats = flowmonitor->GetFlowStats();
+
+  for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator iter = stats.begin(); iter != stats.end(); ++iter)
+  {
+      Ipv6FlowClassifier::FiveTuple t = classifier->FindFlow(iter->first);
+
+      // NS_LOG_UNCOND("----Flow ID:" << iter->first);
+      // NS_LOG_UNCOND("Source Address (" << t.sourceAddress <<","<<t.sourcePort<< ") Destination Address (" << t.destinationAddress<<","<<t.destinationPort<< ")");
+      // NS_LOG_UNCOND("Sent Packets=" << iter->second.txPackets);
+      // NS_LOG_UNCOND("Received Packets =" << iter->second.rxPackets);
+      // NS_LOG_UNCOND("Lost Packets =" << iter->second.lostPackets);
+      // NS_LOG_UNCOND("Packet delivery ratio =" << iter->second.rxPackets * 100 / iter->second.txPackets << "%");
+      // NS_LOG_UNCOND("Packet loss ratio =" << (iter->second.lostPackets) * 100 / iter->second.txPackets << "%");
+      // NS_LOG_UNCOND("Delay =" << iter->second.delaySum);
+      // NS_LOG_UNCOND("Jitter =" << iter->second.jitterSum);
+      // NS_LOG_UNCOND("Throughput =" << iter->second.rxBytes * 8.0 / (iter->second.timeLastRxPacket.GetSeconds() - iter->second.timeFirstTxPacket.GetSeconds()) / 1024 << "Kbps");
+      // std::cout<<"\n";
+      SentPackets = SentPackets + (iter->second.txPackets);
+      ReceivedPackets = ReceivedPackets + (iter->second.rxPackets);
+      LostPackets = LostPackets + (iter->second.lostPackets);
+      AvgThroughput = AvgThroughput + (iter->second.rxBytes * 8.0 / (iter->second.timeLastRxPacket.GetSeconds() - iter->second.timeFirstTxPacket.GetSeconds()) )/ 1024;
+      Delay = Delay + (iter->second.delaySum);
+      Jitter = Jitter + (iter->second.jitterSum);
+
+      j = j + 1;
+      
+  }
+
+
+  
+  float DeliveryRatio=(100.0*ReceivedPackets)/SentPackets;
+  float DropRatio=(100.0*LostPackets)/SentPackets;
+  
+  uint32_t totalFlows=nNodes;
+  AvgThroughput = AvgThroughput /totalFlows;
+  Time  avgDelay=Delay/ReceivedPackets;
+    NS_LOG_UNCOND("--------Total Results of the simulation----------" << std::endl);
+  NS_LOG_UNCOND("Total sent packets  =" << SentPackets);
+  NS_LOG_UNCOND("Total Received Packets =" << ReceivedPackets);
+  NS_LOG_UNCOND("Total Lost Packets =" << LostPackets);
+  NS_LOG_UNCOND("Packet Loss ratio =" <<  DropRatio << "%");
+  NS_LOG_UNCOND("Packet delivery ratio =" << DeliveryRatio << "%");
+  NS_LOG_UNCOND("Average Throughput =" << AvgThroughput << "Kbps");
+  NS_LOG_UNCOND("End to End Delay =" << Delay);
+  NS_LOG_UNCOND("End to End Average Delay =" << avgDelay);
+  NS_LOG_UNCOND("End to End Jitter delay =" << Jitter);
+  NS_LOG_UNCOND("Total Flow " << j);
+  std::cout<<"\n";
+
+
+  // std::ofstream AvgThroughputFileVsNumNodes;
+  // AvgThroughputFileVsNumNodes.open("dataTaskA1/AvgThroughputFileVsNumNodes",std::ios_base::app);
+  // AvgThroughputFileVsNumNodes<<nNodes<<" "<<AvgThroughput<<std::endl;
+
+  // std::ofstream DeliveryRatioFileVsNumNodes;
+  // DeliveryRatioFileVsNumNodes.open("dataTaskA1/DeliveryRatioFileVsNumNodes",std::ios_base::app);
+  // DeliveryRatioFileVsNumNodes<<nNodes<<" "<<DeliveryRatio<<std::endl;
+
+  //   std::ofstream DropRatioFileVsNumNodes;
+  // DropRatioFileVsNumNodes.open("dataTaskA1/DropRatioFileVsNumNodes",std::ios_base::app);
+  // DropRatioFileVsNumNodes<<nNodes<<" "<<DropRatio<<std::endl;
+
+  //   std::ofstream DelayFileVsNumNodes;
+  // DelayFileVsNumNodes.open("dataTaskA1/DelayFileVsNumNodes",std::ios_base::app);
+  // DelayFileVsNumNodes<<nNodes<<" "<<avgDelay<<std::endl;
+
+
+
+
+  // std::ofstream AvgThroughputFileVsNumFlows;
+  // AvgThroughputFileVsNumFlows.open("dataTaskA1/AvgThroughputFileVsNumFlows",std::ios_base::app);
+  // AvgThroughputFileVsNumFlows<<totalFlows<<" "<<AvgThroughput<<std::endl;
+
+  // std::ofstream DeliveryRatioFileVsNumFlows;
+  // DeliveryRatioFileVsNumFlows.open("dataTaskA1/DeliveryRatioFileVsNumFlows",std::ios_base::app);
+  // DeliveryRatioFileVsNumFlows<<totalFlows<<" "<<DeliveryRatio<<std::endl;
+
+  //   std::ofstream DropRatioFileVsNumFlows;
+  // DropRatioFileVsNumFlows.open("dataTaskA1/DropRatioFileVsNumFlows",std::ios_base::app);
+  //  DropRatioFileVsNumFlows<<totalFlows<<" "<<DropRatio<<std::endl;
+
+  //    std::ofstream DelayFileVsNumFlows;
+  // DelayFileVsNumFlows.open("dataTaskA1/DelayFileVsNumFlows",std::ios_base::app);
+  //  DelayFileVsNumFlows<<totalFlows<<" "<<avgDelay<<std::endl;
+
+
+
+  // std::ofstream AvgThroughputFileVsNumPackets;
+  // AvgThroughputFileVsNumPackets.open("dataTaskA1/AvgThroughputFileVsNumPackets",std::ios_base::app);
+  // AvgThroughputFileVsNumPackets<<packetsPerSecond<<" "<<AvgThroughput<<std::endl;
+
+  //   std::ofstream DeliveryRatioFileVsNumPackets;
+  // DeliveryRatioFileVsNumPackets.open("dataTaskA1/DeliveryRatioFileVsNumPackets",std::ios_base::app);
+  // DeliveryRatioFileVsNumPackets<<packetsPerSecond<<" "<<DeliveryRatio<<std::endl;
+
+  // std::ofstream DropRatioFileVsNumPackets;
+  // DropRatioFileVsNumPackets.open("dataTaskA1/DropRatioFileVsNumPackets",std::ios_base::app);
+  // DropRatioFileVsNumPackets<<packetsPerSecond<<" "<<DropRatio<<std::endl;
+
+  // std::ofstream DelayFileVsNumPackets;
+  // DelayFileVsNumPackets.open("dataTaskA1/DelayFileVsNumPackets",std::ios_base::app);
+  // DelayFileVsNumPackets<<packetsPerSecond<<" "<<avgDelay<<std::endl;
+
+
+
+  // std::ofstream AvgThroughputFileVsCoverage;
+  // AvgThroughputFileVsCoverage.open("dataTaskA1/AvgThroughputFileVsCoverage",std::ios_base::app);
+  // AvgThroughputFileVsCoverage<<MaxCoverageRange<<" "<<AvgThroughput<<std::endl;
+
+  // std::ofstream DeliveryRatioFileVsCoverage;
+  // DeliveryRatioFileVsCoverage.open("dataTaskA1/DeliveryRatioFileVsCoverage",std::ios_base::app);
+  // DeliveryRatioFileVsCoverage<<MaxCoverageRange<<" "<<DeliveryRatio<<std::endl;
+
+  // std::ofstream DropRatioFileVsCoverage;
+  // DropRatioFileVsCoverage.open("dataTaskA1/DropRatioFileVsCoverage",std::ios_base::app);
+  // DropRatioFileVsCoverage<<MaxCoverageRange<<" "<<DropRatio<<std::endl;
+
+  //   std::ofstream DelayFileVsCoverage;
+  // DelayFileVsCoverage.open("dataTaskA1/DelayFileVsCoverage",std::ios_base::app);
+  // DelayFileVsCoverage<<MaxCoverageRange<<" "<<avgDelay<<std::endl;
+
+
+
+  // std::ofstream AvgThroughputFileVspacketSize;
+  // AvgThroughputFileVspacketSize.open("dataTaskA1/AvgThroughputFileVspacketSize",std::ios_base::app);
+  // AvgThroughputFileVspacketSize<<packetSize<<" "<<AvgThroughput<<std::endl;
+
+  // std::ofstream DeliveryRatioFileVspacketSize;
+  // DeliveryRatioFileVspacketSize.open("dataTaskA1/DeliveryRatioFileVspacketSize",std::ios_base::app);
+  // DeliveryRatioFileVspacketSize<<packetSize<<" "<<DeliveryRatio<<std::endl;
+
+  // std::ofstream DropRatioFileVspacketSize;
+  // DropRatioFileVspacketSize.open("dataTaskA1/DropRatioFileVspacketSize",std::ios_base::app);
+  // DropRatioFileVspacketSize<<packetSize<<" "<<DropRatio<<std::endl;
+
+  //   std::ofstream DelayFileVspacketSize;
+  // DelayFileVspacketSize.open("dataTaskA1/DelayFileVspacketSize",std::ios_base::app);
+  // DelayFileVspacketSize<<packetSize<<" "<<avgDelay<<std::endl;
+
+
 //   Ping6Helper ping6;
 
 //   ping6.SetLocal (i.GetAddress (0, 1));
@@ -195,7 +354,7 @@ int main (int argc, char **argv)
 //   apps.Stop (Seconds (10.0));
 
 
-  NS_LOG_INFO ("Run Simulation.");
+
   Simulator::Destroy ();
   NS_LOG_INFO ("Done.");
 }
