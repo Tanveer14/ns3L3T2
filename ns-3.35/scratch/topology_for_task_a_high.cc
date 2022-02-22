@@ -159,26 +159,25 @@ main (int argc, char *argv[])
   bool tracing = false;
   
   double MaxCoverageRange=10.0;
-  double packetsPerSecond=500;
+  double packetsPerSecond=300;
   double packetSize=1024;
   double txRange=3.0;
   uint32_t numHalfFlows = 10;
   uint32_t nWifi ;
   uint32_t nWifiP;
+  uint32_t totalNodes=22;
   uint32_t nPackets=2000;//20000
 
-  nWifi = numHalfFlows;
-  nWifiP = nWifi;
+  
  
- Config::SetDefault ("ns3::TcpSocket::SegmentSize", UintegerValue (packetSize));
-
-  // std::string tcpVariant = "TcpWestwood";
+  Config::SetDefault ("ns3::TcpSocket::SegmentSize", UintegerValue (packetSize));
 
   CommandLine cmd (__FILE__);
 
   // cmd.AddValue ("nWifi", "Number of wifi STA devices left side", nWifi);
   // cmd.AddValue ("nWifiP", "Number of wifi STA devices rght side", nWifiP);
   cmd.AddValue ("numHalfFlows", "Number of flows", numHalfFlows);
+  cmd.AddValue ("totalNodes", "Number of nodes", totalNodes);
   cmd.AddValue ("packetsPerSecond", "Number packets to be transmitted per second", packetsPerSecond);
   cmd.AddValue ("MaxCoverageRange", "Max coverage range of wifi", MaxCoverageRange);
 
@@ -188,19 +187,9 @@ main (int argc, char *argv[])
   cmd.Parse (argc,argv);
 
 
-
-  // The underlying restriction of 18 is due to the grid position
-  // allocator's configuration; the grid layout will exceed the
-  // bounding box if more than 18 nodes are provided.
-  // if (nWifi > 18)
-  //   {
-  //     std::cout << "nWifi should be 18 or less; otherwise grid layout exceeds the bounding box" << std::endl;
-  //     return 1;
-  //   }
-
-
-
   std::string dataRate = std::to_string(packetsPerSecond*packetSize*8/1024) + "Kbps";
+  nWifi = (totalNodes-2)/2;
+  nWifiP = nWifi;
  
 
   
@@ -208,7 +197,7 @@ main (int argc, char *argv[])
   p2pNodes.Create (2);
 
   PointToPointHelper pointToPoint;
-  pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("1Mbps"));
+  pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("2Mbps"));
   pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
 
 
@@ -389,6 +378,7 @@ main (int argc, char *argv[])
   Time Jitter;
   Time Delay;
 
+
   Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier>(flowmonitorhelper.GetClassifier());
   std::map<FlowId, FlowMonitor::FlowStats> stats = flowmonitor->GetFlowStats();
 
@@ -425,9 +415,13 @@ main (int argc, char *argv[])
   float DeliveryRatio=(100.0*ReceivedPackets)/SentPackets;
   float DropRatio=(100.0*LostPackets)/SentPackets;
   
-  uint32_t totalFlows=2*numHalfFlows;
-  double AvgThroughputPerflow = AvgThroughput /totalFlows;
-  Time  avgDelay=Delay/ReceivedPackets;
+  // uint32_t totalFlows=2*numHalfFlows;
+  // double AvgThroughputPerflow = AvgThroughput /totalFlows;
+  Time  avgDelay=Seconds(0);
+  if(ReceivedPackets!=0)
+  {
+    avgDelay=Delay/ReceivedPackets;
+  }
 
 
   // std::ofstream AvgThroughputFileVsNumNodes;
@@ -449,25 +443,25 @@ main (int argc, char *argv[])
 
 
 
-  std::ofstream AvgThroughputFileVsNumFlows;
-  AvgThroughputFileVsNumFlows.open("dataTaskA1/AvgThroughputFileVsNumFlows",std::ios_base::app);
-  AvgThroughputFileVsNumFlows<<totalFlows<<" "<<AvgThroughput<<std::endl;
+  // std::ofstream AvgThroughputFileVsNumFlows;
+  // AvgThroughputFileVsNumFlows.open("dataTaskA1/AvgThroughputFileVsNumFlows",std::ios_base::app);
+  // AvgThroughputFileVsNumFlows<<totalFlows<<" "<<AvgThroughput<<std::endl;
 
-  std::ofstream AvgThroughputPerflowFileVsNumFlows;
-  AvgThroughputPerflowFileVsNumFlows.open("dataTaskA1/AvgThroughputPerflowFileVsNumFlows",std::ios_base::app);
-  AvgThroughputPerflowFileVsNumFlows<<totalFlows<<" "<<AvgThroughputPerflow<<std::endl;
+  // std::ofstream AvgThroughputPerflowFileVsNumFlows;
+  // AvgThroughputPerflowFileVsNumFlows.open("dataTaskA1/AvgThroughputPerflowFileVsNumFlows",std::ios_base::app);
+  // AvgThroughputPerflowFileVsNumFlows<<totalFlows<<" "<<AvgThroughputPerflow<<std::endl;
 
-  std::ofstream DeliveryRatioFileVsNumFlows;
-  DeliveryRatioFileVsNumFlows.open("dataTaskA1/DeliveryRatioFileVsNumFlows",std::ios_base::app);
-  DeliveryRatioFileVsNumFlows<<totalFlows<<" "<<DeliveryRatio<<std::endl;
+  // std::ofstream DeliveryRatioFileVsNumFlows;
+  // DeliveryRatioFileVsNumFlows.open("dataTaskA1/DeliveryRatioFileVsNumFlows",std::ios_base::app);
+  // DeliveryRatioFileVsNumFlows<<totalFlows<<" "<<DeliveryRatio<<std::endl;
 
-    std::ofstream DropRatioFileVsNumFlows;
-  DropRatioFileVsNumFlows.open("dataTaskA1/DropRatioFileVsNumFlows",std::ios_base::app);
-   DropRatioFileVsNumFlows<<totalFlows<<" "<<DropRatio<<std::endl;
+  //   std::ofstream DropRatioFileVsNumFlows;
+  // DropRatioFileVsNumFlows.open("dataTaskA1/DropRatioFileVsNumFlows",std::ios_base::app);
+  //  DropRatioFileVsNumFlows<<totalFlows<<" "<<DropRatio<<std::endl;
 
-     std::ofstream DelayFileVsNumFlows;
-  DelayFileVsNumFlows.open("dataTaskA1/DelayFileVsNumFlows",std::ios_base::app);
-   DelayFileVsNumFlows<<totalFlows<<" "<<avgDelay<<std::endl;
+  //    std::ofstream DelayFileVsNumFlows;
+  // DelayFileVsNumFlows.open("dataTaskA1/DelayFileVsNumFlows",std::ios_base::app);
+  //  DelayFileVsNumFlows<<totalFlows<<" "<<avgDelay<<std::endl;
 
 
 
@@ -489,21 +483,21 @@ main (int argc, char *argv[])
 
 
 
-  // std::ofstream AvgThroughputFileVsCoverage;
-  // AvgThroughputFileVsCoverage.open("dataTaskA1/AvgThroughputFileVsCoverage",std::ios_base::app);
-  // AvgThroughputFileVsCoverage<<MaxCoverageRange<<" "<<AvgThroughput<<std::endl;
+  std::ofstream AvgThroughputFileVsCoverage;
+  AvgThroughputFileVsCoverage.open("dataTaskA1/AvgThroughputFileVsCoverage",std::ios_base::app);
+  AvgThroughputFileVsCoverage<<MaxCoverageRange<<" "<<AvgThroughput<<std::endl;
 
-  // std::ofstream DeliveryRatioFileVsCoverage;
-  // DeliveryRatioFileVsCoverage.open("dataTaskA1/DeliveryRatioFileVsCoverage",std::ios_base::app);
-  // DeliveryRatioFileVsCoverage<<MaxCoverageRange<<" "<<DeliveryRatio<<std::endl;
+  std::ofstream DeliveryRatioFileVsCoverage;
+  DeliveryRatioFileVsCoverage.open("dataTaskA1/DeliveryRatioFileVsCoverage",std::ios_base::app);
+  DeliveryRatioFileVsCoverage<<MaxCoverageRange<<" "<<DeliveryRatio<<std::endl;
 
-  // std::ofstream DropRatioFileVsCoverage;
-  // DropRatioFileVsCoverage.open("dataTaskA1/DropRatioFileVsCoverage",std::ios_base::app);
-  // DropRatioFileVsCoverage<<MaxCoverageRange<<" "<<DropRatio<<std::endl;
+  std::ofstream DropRatioFileVsCoverage;
+  DropRatioFileVsCoverage.open("dataTaskA1/DropRatioFileVsCoverage",std::ios_base::app);
+  DropRatioFileVsCoverage<<MaxCoverageRange<<" "<<DropRatio<<std::endl;
 
-  //   std::ofstream DelayFileVsCoverage;
-  // DelayFileVsCoverage.open("dataTaskA1/DelayFileVsCoverage",std::ios_base::app);
-  // DelayFileVsCoverage<<MaxCoverageRange<<" "<<avgDelay<<std::endl;
+    std::ofstream DelayFileVsCoverage;
+  DelayFileVsCoverage.open("dataTaskA1/DelayFileVsCoverage",std::ios_base::app);
+  DelayFileVsCoverage<<MaxCoverageRange<<" "<<avgDelay<<std::endl;
 
 
 

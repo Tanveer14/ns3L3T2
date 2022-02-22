@@ -2,38 +2,27 @@ set terminal png
 
 
 
-set output "AvgThroughputVsNumFlows.png"
-set title "Throughput(Kbps) Vs Number of Flows"
-set xlabel "Number of Flows"
+set output "AvgThroughputVsCoverage.png"
+set title "Throughput(Kbps) Vs Coverage(m)"
+set xlabel "Coverage(m)"
 set ylabel "Throughput(Kbps)"
-plot "AvgThroughputFileVsNumFlows" using 1:2 with lines title "Throughput(Kbps)" lc "blue"
+plot "AvgThroughputFileVsCoverage" using 1:2 with lines title "Throughput(Kbps)" lc "blue"
 
 
-
-set output "AvgThroughputPerflowVsNumFlows.png"
-set title "Throughput(Kbps) Per Flow  Vs Number of Flows"
-set xlabel "Number of Flows"
-set ylabel "Throughput(Kbps)"
-plot "AvgThroughputPerflowFileVsNumFlows" using 1:2 with lines title "Throughput(Kbps)" lc "blue"
-
-
-
-set output "DeliveryRatioVsNumFlows.png"
-set title "Delivery Ratio(%)  Vs Number of Flows"
-set xlabel "Number of Flows "
+set output "DeliveryRatioVsCoverage.png"
+set title "Delivery Ratio(%) Vs Coverage(m)"
+set xlabel "Coverage(m)"
 set ylabel "Delivery Ratio(%)"
-plot "DeliveryRatioFileVsNumFlows" using 1:2 with lines title "Delivery Ratio(%)" lc "blue"
+plot "DeliveryRatioFileVsCoverage" using 1:2 with lines title "Delivery Ratio(%)" lc "blue"
 
-set output "DropRatioVsNumFlows.png"
-set title "Drop Ratio(%)  Vs Number of Flows"
-set xlabel "Number of Flows"
+set output "DropRatioVsCoverage.png"
+set title "Drop Ratio(%) Vs Coverage(m)"
+set xlabel "Coverage(m)"
 set ylabel "Drop Ratio(%)"
-plot "DropRatioFileVsNumFlows" using 1:2 with lines title "Drop Ratio(%)" lc "blue"
+plot "DropRatioFileVsCoverage" using 1:2 with lines title "Drop Ratio(%)" lc "blue"
 
-set output "DelayVsNumFlows.png"
-set title "Delay(ns)  Vs Number of Flows"
-set xlabel "Number of Flows"
+set output "DelayVsCoverage.png"
+set title "Delay(ns) Vs Coverage(m)"
+set xlabel "Coverage(m)"
 set ylabel "Delay"
-plot "DelayFileVsNumFlows" using 1:2 with lines title "Delay" lc "blue"
-
-
+plot "DelayFileVsCoverage" using 1:2 with lines title "Delay" lc "blue"

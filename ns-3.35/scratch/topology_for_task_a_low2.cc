@@ -156,17 +156,21 @@ int main (int argc, char **argv)
 
     uint32_t nHalf=nNodes/2;
 
+
+
     NS_LOG_INFO ("Create Applications.");
+    uint16_t sinkPort = 9;
+    ApplicationContainer sinkApps;
 
     for(uint32_t i=0;i<nHalf;i++)
     {
     uint32_t j=nHalf+i;
     NS_LOG_INFO ("Create Application"<<i);
         /* Install TCP Receiver on the access point */
-    PacketSinkHelper sinkHelper ("ns3::TcpSocketFactory", Inet6SocketAddress (Ipv6Address::GetAny (), 9));
+    PacketSinkHelper sinkHelper ("ns3::TcpSocketFactory", Inet6SocketAddress (Ipv6Address::GetAny (), sinkPort));
     ApplicationContainer sinkApp = sinkHelper.Install (nodes.Get(j));
       /* Install TCP/UDP Transmitter on the station */
-    OnOffHelper server ("ns3::TcpSocketFactory", (Inet6SocketAddress (interfaces.GetAddress (j,1), 9)));
+    OnOffHelper server ("ns3::TcpSocketFactory", (Inet6SocketAddress (interfaces.GetAddress (j,1), sinkPort)));
     server.SetAttribute ("PacketSize", UintegerValue (packetSize));
     server.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
     server.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
@@ -174,9 +178,10 @@ int main (int argc, char **argv)
 
 
     sinkApp.Start (Seconds (0.0));
+    sinkApp.Stop (Seconds (simulationTime));
     serverApp.Start (Seconds (1.0));
 
-    sinkApp.Stop (Seconds (simulationTime));
+    
     serverApp.Stop (Seconds (simulationTime+10));
 
 }
@@ -251,107 +256,94 @@ int main (int argc, char **argv)
 
 
   // std::ofstream AvgThroughputFileVsNumNodes;
-  // AvgThroughputFileVsNumNodes.open("dataTaskA1/AvgThroughputFileVsNumNodes",std::ios_base::app);
+  // AvgThroughputFileVsNumNodes.open("dataTaskA2/AvgThroughputFileVsNumNodes",std::ios_base::app);
   // AvgThroughputFileVsNumNodes<<nNodes<<" "<<AvgThroughput<<std::endl;
 
   // std::ofstream DeliveryRatioFileVsNumNodes;
-  // DeliveryRatioFileVsNumNodes.open("dataTaskA1/DeliveryRatioFileVsNumNodes",std::ios_base::app);
+  // DeliveryRatioFileVsNumNodes.open("dataTaskA2/DeliveryRatioFileVsNumNodes",std::ios_base::app);
   // DeliveryRatioFileVsNumNodes<<nNodes<<" "<<DeliveryRatio<<std::endl;
 
   //   std::ofstream DropRatioFileVsNumNodes;
-  // DropRatioFileVsNumNodes.open("dataTaskA1/DropRatioFileVsNumNodes",std::ios_base::app);
+  // DropRatioFileVsNumNodes.open("dataTaskA2/DropRatioFileVsNumNodes",std::ios_base::app);
   // DropRatioFileVsNumNodes<<nNodes<<" "<<DropRatio<<std::endl;
 
   //   std::ofstream DelayFileVsNumNodes;
-  // DelayFileVsNumNodes.open("dataTaskA1/DelayFileVsNumNodes",std::ios_base::app);
+  // DelayFileVsNumNodes.open("dataTaskA2/DelayFileVsNumNodes",std::ios_base::app);
   // DelayFileVsNumNodes<<nNodes<<" "<<avgDelay<<std::endl;
 
 
 
 
   // std::ofstream AvgThroughputFileVsNumFlows;
-  // AvgThroughputFileVsNumFlows.open("dataTaskA1/AvgThroughputFileVsNumFlows",std::ios_base::app);
+  // AvgThroughputFileVsNumFlows.open("dataTaskA2/AvgThroughputFileVsNumFlows",std::ios_base::app);
   // AvgThroughputFileVsNumFlows<<totalFlows<<" "<<AvgThroughput<<std::endl;
 
   // std::ofstream DeliveryRatioFileVsNumFlows;
-  // DeliveryRatioFileVsNumFlows.open("dataTaskA1/DeliveryRatioFileVsNumFlows",std::ios_base::app);
+  // DeliveryRatioFileVsNumFlows.open("dataTaskA2/DeliveryRatioFileVsNumFlows",std::ios_base::app);
   // DeliveryRatioFileVsNumFlows<<totalFlows<<" "<<DeliveryRatio<<std::endl;
 
   //   std::ofstream DropRatioFileVsNumFlows;
-  // DropRatioFileVsNumFlows.open("dataTaskA1/DropRatioFileVsNumFlows",std::ios_base::app);
+  // DropRatioFileVsNumFlows.open("dataTaskA2/DropRatioFileVsNumFlows",std::ios_base::app);
   //  DropRatioFileVsNumFlows<<totalFlows<<" "<<DropRatio<<std::endl;
 
   //    std::ofstream DelayFileVsNumFlows;
-  // DelayFileVsNumFlows.open("dataTaskA1/DelayFileVsNumFlows",std::ios_base::app);
+  // DelayFileVsNumFlows.open("dataTaskA2/DelayFileVsNumFlows",std::ios_base::app);
   //  DelayFileVsNumFlows<<totalFlows<<" "<<avgDelay<<std::endl;
 
 
 
   // std::ofstream AvgThroughputFileVsNumPackets;
-  // AvgThroughputFileVsNumPackets.open("dataTaskA1/AvgThroughputFileVsNumPackets",std::ios_base::app);
+  // AvgThroughputFileVsNumPackets.open("dataTaskA2/AvgThroughputFileVsNumPackets",std::ios_base::app);
   // AvgThroughputFileVsNumPackets<<packetsPerSecond<<" "<<AvgThroughput<<std::endl;
 
   //   std::ofstream DeliveryRatioFileVsNumPackets;
-  // DeliveryRatioFileVsNumPackets.open("dataTaskA1/DeliveryRatioFileVsNumPackets",std::ios_base::app);
+  // DeliveryRatioFileVsNumPackets.open("dataTaskA2/DeliveryRatioFileVsNumPackets",std::ios_base::app);
   // DeliveryRatioFileVsNumPackets<<packetsPerSecond<<" "<<DeliveryRatio<<std::endl;
 
   // std::ofstream DropRatioFileVsNumPackets;
-  // DropRatioFileVsNumPackets.open("dataTaskA1/DropRatioFileVsNumPackets",std::ios_base::app);
+  // DropRatioFileVsNumPackets.open("dataTaskA2/DropRatioFileVsNumPackets",std::ios_base::app);
   // DropRatioFileVsNumPackets<<packetsPerSecond<<" "<<DropRatio<<std::endl;
 
   // std::ofstream DelayFileVsNumPackets;
-  // DelayFileVsNumPackets.open("dataTaskA1/DelayFileVsNumPackets",std::ios_base::app);
+  // DelayFileVsNumPackets.open("dataTaskA2/DelayFileVsNumPackets",std::ios_base::app);
   // DelayFileVsNumPackets<<packetsPerSecond<<" "<<avgDelay<<std::endl;
 
 
 
   // std::ofstream AvgThroughputFileVsCoverage;
-  // AvgThroughputFileVsCoverage.open("dataTaskA1/AvgThroughputFileVsCoverage",std::ios_base::app);
+  // AvgThroughputFileVsCoverage.open("dataTaskA2/AvgThroughputFileVsCoverage",std::ios_base::app);
   // AvgThroughputFileVsCoverage<<MaxCoverageRange<<" "<<AvgThroughput<<std::endl;
 
   // std::ofstream DeliveryRatioFileVsCoverage;
-  // DeliveryRatioFileVsCoverage.open("dataTaskA1/DeliveryRatioFileVsCoverage",std::ios_base::app);
+  // DeliveryRatioFileVsCoverage.open("dataTaskA2/DeliveryRatioFileVsCoverage",std::ios_base::app);
   // DeliveryRatioFileVsCoverage<<MaxCoverageRange<<" "<<DeliveryRatio<<std::endl;
 
   // std::ofstream DropRatioFileVsCoverage;
-  // DropRatioFileVsCoverage.open("dataTaskA1/DropRatioFileVsCoverage",std::ios_base::app);
+  // DropRatioFileVsCoverage.open("dataTaskA2/DropRatioFileVsCoverage",std::ios_base::app);
   // DropRatioFileVsCoverage<<MaxCoverageRange<<" "<<DropRatio<<std::endl;
 
   //   std::ofstream DelayFileVsCoverage;
-  // DelayFileVsCoverage.open("dataTaskA1/DelayFileVsCoverage",std::ios_base::app);
+  // DelayFileVsCoverage.open("dataTaskA2/DelayFileVsCoverage",std::ios_base::app);
   // DelayFileVsCoverage<<MaxCoverageRange<<" "<<avgDelay<<std::endl;
 
 
 
   // std::ofstream AvgThroughputFileVspacketSize;
-  // AvgThroughputFileVspacketSize.open("dataTaskA1/AvgThroughputFileVspacketSize",std::ios_base::app);
+  // AvgThroughputFileVspacketSize.open("dataTaskA2/AvgThroughputFileVspacketSize",std::ios_base::app);
   // AvgThroughputFileVspacketSize<<packetSize<<" "<<AvgThroughput<<std::endl;
 
   // std::ofstream DeliveryRatioFileVspacketSize;
-  // DeliveryRatioFileVspacketSize.open("dataTaskA1/DeliveryRatioFileVspacketSize",std::ios_base::app);
+  // DeliveryRatioFileVspacketSize.open("dataTaskA2/DeliveryRatioFileVspacketSize",std::ios_base::app);
   // DeliveryRatioFileVspacketSize<<packetSize<<" "<<DeliveryRatio<<std::endl;
 
   // std::ofstream DropRatioFileVspacketSize;
-  // DropRatioFileVspacketSize.open("dataTaskA1/DropRatioFileVspacketSize",std::ios_base::app);
+  // DropRatioFileVspacketSize.open("dataTaskA2/DropRatioFileVspacketSize",std::ios_base::app);
   // DropRatioFileVspacketSize<<packetSize<<" "<<DropRatio<<std::endl;
 
   //   std::ofstream DelayFileVspacketSize;
-  // DelayFileVspacketSize.open("dataTaskA1/DelayFileVspacketSize",std::ios_base::app);
+  // DelayFileVspacketSize.open("dataTaskA2/DelayFileVspacketSize",std::ios_base::app);
   // DelayFileVspacketSize<<packetSize<<" "<<avgDelay<<std::endl;
 
-
-//   Ping6Helper ping6;
-
-//   ping6.SetLocal (i.GetAddress (0, 1));
-//   ping6.SetRemote (i.GetAddress (1, 1));
-//   // ping6.SetRemote (Ipv6Address::GetAllNodesMulticast ());
-
-//   ping6.SetAttribute ("MaxPackets", UintegerValue (maxPacketCount));
-//   ping6.SetAttribute ("Interval", TimeValue (interPacketInterval));
-//   ping6.SetAttribute ("PacketSize", UintegerValue (packetSize));
-//   ApplicationContainer apps = ping6.Install (nodes.Get (0));
-//   apps.Start (Seconds (2.0));
-//   apps.Stop (Seconds (10.0));
 
 
 
