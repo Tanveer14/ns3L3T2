@@ -23,15 +23,15 @@
 
 #MaxCoverageRange vary
 
-for i in {1..5..1}
-do
-./waf --run "scratch/topology_for_task_a_high --MaxCoverageRange=$i"
-done
-
-#numHalfFlows vary
-
-# for i in {5..25..5}
+# for i in {1..5..1}
 # do
-# ./waf --run "scratch/topology_for_task_a_high --numHalfFlows=$i"
+# ./waf --run "scratch/topology_for_task_a_high --MaxCoverageRange=$i"
 # done
+
+# numHalfFlows vary
+
+for i in {5..25..5}
+do
+./waf --run "scratch/topology_for_task_a_high --numHalfFlows=$i"
+done
 

@@ -148,26 +148,6 @@ MyApp::ScheduleTx (void)
     }
 }
 
-// static void
-// CwndChange (Ptr<OutputStreamWrapper> stream,uint32_t oldCwnd, uint32_t newCwnd)
-// {
-//   // NS_LOG_UNCOND (Simulator::Now ().GetSeconds () << "\t" << newCwnd);
-//   *stream->GetStream()<<Simulator::Now ().GetSeconds () << "\t" << newCwnd<<std::endl;
-// }
-
-// static void
-// TraceCwnd (std::string cwnd_tr_file_name)
-// {
-//   AsciiTraceHelper ascii;
-//   static Ptr<OutputStreamWrapper> cWndStream = ascii.CreateFileStream (cwnd_tr_file_name.c_str ());
-//   Config::ConnectWithoutContext ("/NodeList/1/$ns3::TcpL4Protocol/SocketList/0/CongestionWindow", MakeCallback (&CwndChange));
-// }
-
-// static void
-// RxDrop (Ptr<const Packet> p)
-// {
-//   NS_LOG_UNCOND ("RxDrop at " << Simulator::Now ().GetSeconds ());
-// }
 
 int 
 main (int argc, char *argv[])
@@ -186,6 +166,9 @@ main (int argc, char *argv[])
   uint32_t nWifi ;
   uint32_t nWifiP;
   uint32_t nPackets=2000;//20000
+
+  nWifi = numHalfFlows;
+  nWifiP = nWifi;
  
  Config::SetDefault ("ns3::TcpSocket::SegmentSize", UintegerValue (packetSize));
 
@@ -219,15 +202,7 @@ main (int argc, char *argv[])
 
   std::string dataRate = std::to_string(packetsPerSecond*packetSize*8/1024) + "Kbps";
  
-  nWifi = numHalfFlows;
-  nWifiP = numHalfFlows;
-  
 
-  
-  // tcpVariant = std::string ("ns3::") + tcpVariant;
-  // TypeId tcpTid;
-  // NS_ABORT_MSG_UNLESS (TypeId::LookupByNameFailSafe (tcpVariant, &tcpTid), "TypeId " << tcpVariant << " not found");
-  // Config::SetDefault ("ns3::TcpL4Protocol::SocketType", TypeIdValue (TypeId::LookupByName (tcpVariant)));
   
   NodeContainer p2pNodes;
   p2pNodes.Create (2);
@@ -236,16 +211,6 @@ main (int argc, char *argv[])
   pointToPoint.SetDeviceAttribute ("DataRate", StringValue ("1Mbps"));
   pointToPoint.SetChannelAttribute ("Delay", StringValue ("2ms"));
 
-
-  //add error model
-
-  // Ptr<UniformRandomVariable> uv = CreateObject<UniformRandomVariable> ();
-  // uv->SetStream (50);
-  // RateErrorModel error_model;
-  // error_model.SetRandomVariable (uv);
-  // error_model.SetUnit (RateErrorModel::ERROR_UNIT_PACKET);
-  // error_model.SetRate (error_p);
-  // pointToPoint.SetDeviceAttribute ("ReceiveErrorModel", PointerValue (&error_model));
 
   NetDeviceContainer p2pDevices;
   p2pDevices = pointToPoint.Install (p2pNodes);
@@ -328,10 +293,6 @@ main (int argc, char *argv[])
   InternetStackHelper stack;
 
   stack.Install(p2pNodes);
-
-  // Ipv4StaticRoutingHelper staticRoutingHelper;
-  // stack.SetRoutingHelper (staticRoutingHelper);
-
   stack.Install (wifiStaNodes);
   stack.Install (wifiStaNodesP);
 
@@ -379,32 +340,40 @@ main (int argc, char *argv[])
 
   uint16_t sinkPort = 8000;
   ApplicationContainer sinkApps;
+
+  for(uint32_t i = 0; i < nWifi ; i++) {
+
+
+    PacketSinkHelper packetSinkHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), sinkPort));
+    sinkApps.Add(packetSinkHelper.Install (wifiStaNodesP.Get (i))) ;
+    
+  }
+
+
+  sinkApps.Start (Seconds (0.));
+  sinkApps.Stop (Seconds (simulationTime+10));
+
+
+  uint32_t nSinkSourceNode=0;
   for(uint32_t i = 0; i < numHalfFlows ; i++) {
 
+    Address sinkAddress (InetSocketAddress (wifiStaInterfacesP.GetAddress (nSinkSourceNode), sinkPort));
 
-    
-    Address sinkAddress (InetSocketAddress (wifiStaInterfacesP.GetAddress (i), sinkPort));
-    PacketSinkHelper packetSinkHelper ("ns3::TcpSocketFactory", InetSocketAddress (Ipv4Address::GetAny (), sinkPort));
-    sinkApps = packetSinkHelper.Install (wifiStaNodesP.Get (i));
-    sinkApps.Start (Seconds (0.));
-    sinkApps.Stop (Seconds (simulationTime+10));
-
- 
-    Ptr<Socket> ns3TcpSocket = Socket::CreateSocket (wifiStaNodes.Get (i), TcpSocketFactory::GetTypeId ());
+    Ptr<Socket> ns3TcpSocket = Socket::CreateSocket (wifiStaNodes.Get (nSinkSourceNode), TcpSocketFactory::GetTypeId ());
     Ptr<MyApp> app = CreateObject<MyApp> ();
     app->Setup (ns3TcpSocket, sinkAddress, packetSize, nPackets, DataRate (dataRate));
-    wifiStaNodes.Get (i)->AddApplication (app);
+    wifiStaNodes.Get (nSinkSourceNode)->AddApplication (app);
     app->SetStartTime (Seconds (1.));
     app->SetStopTime (Seconds (simulationTime));
 
-      
-  
 
-    // AsciiTraceHelper ascii ;
-    // Ptr<OutputStreamWrapper> osw=ascii.CreateFileStream("data/cwnd"+tcpVariant+std::to_string(i));
-    
-    // ns3TcpSocket->TraceConnectWithoutContext ("CongestionWindow", MakeBoundCallback (&CwndChange,osw));
+    nSinkSourceNode=(nSinkSourceNode+1)%nWifi;
   }
+
+
+
+
+
   
 
  
@@ -413,7 +382,6 @@ main (int argc, char *argv[])
    
 
   Simulator::Run ();
-  // flowmonitor->SerializeToXmlFile("TopologyForTaskA.xml", true, true);
 
   int j = 0;
   float AvgThroughput = 0;
@@ -426,24 +394,22 @@ main (int argc, char *argv[])
 
   for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator iter = stats.begin(); iter != stats.end(); ++iter)
   {
-      // Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow(iter->first);
+      Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow(iter->first);
 
-      // NS_LOG_UNCOND("----Flow ID:" << iter->first);
-      // NS_LOG_UNCOND("Source Address (" << t.sourceAddress <<","<<t.sourcePort<< ") Destination Address (" << t.destinationAddress<<","<<t.destinationPort<< ")");
-      // NS_LOG_UNCOND("Sent Packets=" << iter->second.txPackets);
-      // NS_LOG_UNCOND("Received Packets =" << iter->second.rxPackets);
-      // // NS_LOG_UNCOND("Lost Packets =" << iter->second.txPackets - iter->second.rxPackets);
-      // NS_LOG_UNCOND("Lost Packets =" << iter->second.lostPackets);
+      NS_LOG_UNCOND("----Flow ID:" << iter->first);
+      NS_LOG_UNCOND("Source Address (" << t.sourceAddress <<","<<t.sourcePort<< ") Destination Address (" << t.destinationAddress<<","<<t.destinationPort<< ")");
+      NS_LOG_UNCOND("Sent Packets=" << iter->second.txPackets);
+      NS_LOG_UNCOND("Received Packets =" << iter->second.rxPackets);
+      NS_LOG_UNCOND("Lost Packets =" << iter->second.lostPackets);
 
-      // NS_LOG_UNCOND("Packet delivery ratio =" << iter->second.rxPackets * 100 / iter->second.txPackets << "%");
-      // NS_LOG_UNCOND("Packet loss ratio =" << (iter->second.txPackets - iter->second.rxPackets) * 100 / iter->second.txPackets << "%");
-      // NS_LOG_UNCOND("Delay =" << iter->second.delaySum);
-      // NS_LOG_UNCOND("Jitter =" << iter->second.jitterSum);
-      // NS_LOG_UNCOND("Throughput =" << iter->second.rxBytes * 8.0 / (iter->second.timeLastRxPacket.GetSeconds() - iter->second.timeFirstTxPacket.GetSeconds()) / 1024 << "Kbps");
-      // std::cout<<"\n";
+      NS_LOG_UNCOND("Packet delivery ratio =" << iter->second.rxPackets * 100 / iter->second.txPackets << "%");
+      NS_LOG_UNCOND("Packet loss ratio =" << (iter->second.txPackets - iter->second.rxPackets) * 100 / iter->second.txPackets << "%");
+      NS_LOG_UNCOND("Delay =" << iter->second.delaySum);
+      NS_LOG_UNCOND("Jitter =" << iter->second.jitterSum);
+      NS_LOG_UNCOND("Throughput =" << iter->second.rxBytes * 8.0 / (iter->second.timeLastRxPacket.GetSeconds() - iter->second.timeFirstTxPacket.GetSeconds()) / 1024 << "Kbps");
+      std::cout<<"\n";
       SentPackets = SentPackets + (iter->second.txPackets);
       ReceivedPackets = ReceivedPackets + (iter->second.rxPackets);
-      // LostPackets = LostPackets + (iter->second.txPackets - iter->second.rxPackets);
       LostPackets = LostPackets + (iter->second.lostPackets);
 
       AvgThroughput = AvgThroughput + (iter->second.rxBytes * 8.0 / (iter->second.timeLastRxPacket.GetSeconds() - iter->second.timeFirstTxPacket.GetSeconds()) )/ 1024;
@@ -460,7 +426,7 @@ main (int argc, char *argv[])
   float DropRatio=(100.0*LostPackets)/SentPackets;
   
   uint32_t totalFlows=2*numHalfFlows;
-  AvgThroughput = AvgThroughput /totalFlows;
+  double AvgThroughputPerflow = AvgThroughput /totalFlows;
   Time  avgDelay=Delay/ReceivedPackets;
 
 
@@ -483,21 +449,25 @@ main (int argc, char *argv[])
 
 
 
-  // std::ofstream AvgThroughputFileVsNumFlows;
-  // AvgThroughputFileVsNumFlows.open("dataTaskA1/AvgThroughputFileVsNumFlows",std::ios_base::app);
-  // AvgThroughputFileVsNumFlows<<totalFlows<<" "<<AvgThroughput<<std::endl;
+  std::ofstream AvgThroughputFileVsNumFlows;
+  AvgThroughputFileVsNumFlows.open("dataTaskA1/AvgThroughputFileVsNumFlows",std::ios_base::app);
+  AvgThroughputFileVsNumFlows<<totalFlows<<" "<<AvgThroughput<<std::endl;
 
-  // std::ofstream DeliveryRatioFileVsNumFlows;
-  // DeliveryRatioFileVsNumFlows.open("dataTaskA1/DeliveryRatioFileVsNumFlows",std::ios_base::app);
-  // DeliveryRatioFileVsNumFlows<<totalFlows<<" "<<DeliveryRatio<<std::endl;
+  std::ofstream AvgThroughputPerflowFileVsNumFlows;
+  AvgThroughputPerflowFileVsNumFlows.open("dataTaskA1/AvgThroughputPerflowFileVsNumFlows",std::ios_base::app);
+  AvgThroughputPerflowFileVsNumFlows<<totalFlows<<" "<<AvgThroughputPerflow<<std::endl;
 
-  //   std::ofstream DropRatioFileVsNumFlows;
-  // DropRatioFileVsNumFlows.open("dataTaskA1/DropRatioFileVsNumFlows",std::ios_base::app);
-  //  DropRatioFileVsNumFlows<<totalFlows<<" "<<DropRatio<<std::endl;
+  std::ofstream DeliveryRatioFileVsNumFlows;
+  DeliveryRatioFileVsNumFlows.open("dataTaskA1/DeliveryRatioFileVsNumFlows",std::ios_base::app);
+  DeliveryRatioFileVsNumFlows<<totalFlows<<" "<<DeliveryRatio<<std::endl;
 
-  //    std::ofstream DelayFileVsNumFlows;
-  // DelayFileVsNumFlows.open("dataTaskA1/DelayFileVsNumFlows",std::ios_base::app);
-  //  DelayFileVsNumFlows<<totalFlows<<" "<<avgDelay<<std::endl;
+    std::ofstream DropRatioFileVsNumFlows;
+  DropRatioFileVsNumFlows.open("dataTaskA1/DropRatioFileVsNumFlows",std::ios_base::app);
+   DropRatioFileVsNumFlows<<totalFlows<<" "<<DropRatio<<std::endl;
+
+     std::ofstream DelayFileVsNumFlows;
+  DelayFileVsNumFlows.open("dataTaskA1/DelayFileVsNumFlows",std::ios_base::app);
+   DelayFileVsNumFlows<<totalFlows<<" "<<avgDelay<<std::endl;
 
 
 
@@ -556,15 +526,6 @@ main (int argc, char *argv[])
 
 
 
-
-
-
-
-
-
-
-
-
   NS_LOG_UNCOND("--------Total Results of the simulation----------for "<< txRange*MaxCoverageRange<< std::endl);
   NS_LOG_UNCOND("Total sent packets  =" << SentPackets);
   NS_LOG_UNCOND("Total Received Packets =" << ReceivedPackets);
@@ -578,20 +539,6 @@ main (int argc, char *argv[])
   NS_LOG_UNCOND("Total Flow " << j);
   NS_LOG_UNCOND("\n");
   Simulator::Destroy ();
-
-//   Ptr<Ipv4FlowClassifier> classifier=DynamicCast<Ipv4FlowClassifier>(flowmonitorhelper.GetClassifier ());
-//   FlowMonitor::FlowStatsContainer stats= flowmonitor->GetFlowStats();
-
-//   for (auto iter = stats.begin(); iter!=stats.end(); ++iter)
-//   {
-//     Ipv4FlowClassifier::FiveTuple flowid=classifier->FindFlow(iter->first);
-    
-    
-//     NS_LOG_UNCOND("Protocol : "<<flowid.protocol<<" SRC: IP > "<<flowid.sourceAddress<<" PORT > "<<flowid.sourcePort<<"---------- DST: IP> "<<flowid.destinationAddress<<" PORT > "<<flowid.destinationPort);
-    
-//   }
-
-
 
 
   
