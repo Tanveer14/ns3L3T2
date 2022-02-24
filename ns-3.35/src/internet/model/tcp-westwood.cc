@@ -57,7 +57,7 @@ TcpWestwood::GetTypeId (void)
     .AddAttribute("ProtocolType", "Use this to let the code run as Westwood or WestwoodPlus",
                   EnumValue(TcpWestwood::WESTWOOD),
                   MakeEnumAccessor(&TcpWestwood::m_pType),
-                  MakeEnumChecker(TcpWestwood::WESTWOOD, "Westwood",TcpWestwood::WESTWOODPLUS, "WestwoodPlus",TcpWestwood::PETRA, "Petra"))
+                  MakeEnumChecker(TcpWestwood::WESTWOOD, "Westwood",TcpWestwood::WESTWOODPLUS, "WestwoodPlus",TcpWestwood::PETRA, "Petra")) //TcpWestwood::GetTypeId (void)
     .AddTraceSource("EstimatedBW", "The estimated bandwidth",
                     MakeTraceSourceAccessor(&TcpWestwood::m_currentBW),
                     "ns3::TracedValueCallback::Double")
@@ -150,7 +150,8 @@ TcpWestwood::EstimateBW (const Time &rtt, Ptr<TcpSocketState> tcb)
       m_currentBW = m_ackedSegments * tcb->m_segmentSize / rtt.GetSeconds ();
       m_IsCount = false;
     }
-  else if (m_pType == TcpWestwood::PETRA)
+    //TcpWestwood::EstimateBW (const Time &rtt, Ptr<TcpSocketState> tcb)
+  else if (m_pType == TcpWestwood::PETRA) 
   {
     Time currentAck = Simulator::Now ();
       m_currentBW = m_ackedSegments * tcb->m_segmentSize / (currentAck - m_lastAck).GetSeconds ();
@@ -215,9 +216,6 @@ TcpWestwood::SlowStart (Ptr<TcpSocketState> tcb, uint32_t segmentsAcked)
   else{
     if (segmentsAcked >= 1)
     {
-      
-      // if(tcb->original_lastRtt<=tcb->m_lastRtt && tcb->m_cWnd<tcb->m_ssThresh/2 )  tcb->m_cWnd += tcb->m_segmentSize*tcb->m_ssThresh/tcb->m_cWnd; 
-      // else 
       tcb->m_cWnd += tcb->m_segmentSize;
       NS_LOG_INFO ("In SlowStart, updated to cwnd " << tcb->m_cWnd << " ssthresh " << tcb->m_ssThresh);
       return segmentsAcked - 1;

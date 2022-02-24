@@ -3564,7 +3564,7 @@ TcpSocketBase::EstimateRtt (const TcpHeader& tcpHeader)
         }
       m_history.pop_front (); // Remove
     }
-
+// TcpSocketBase::EstimateRtt (const TcpHeader& tcpHeader)
   if (!m.IsZero ())
     {
       //store this m as original_lastRtt value

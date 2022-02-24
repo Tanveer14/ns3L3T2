@@ -199,7 +199,7 @@ public:
 
   TracedValue<uint32_t>  m_bytesInFlight {0};        //!< Bytes in flight
   TracedValue<Time>      m_lastRtt {Seconds (0.0)};  //!< Last RTT sample collected
- Time                    original_lastRtt{Seconds (0.0)}; //!< The raw rtt value that was last computed
+  Time                    original_lastRtt{Seconds (0.0)}; //!< The raw rtt value that was last computed
   Ptr<TcpRxBuffer>       m_rxBuffer;                 //!< Rx buffer (reordering buffer)
 
   EcnMode_t              m_ecnMode {ClassicEcn}; //!< ECN mode

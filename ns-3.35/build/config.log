@@ -1,4 +1,4 @@
-# project ns (3.35) configured on Mon Feb 21 20:17:26 2022 by
+# project ns (3.35) configured on Wed Feb 23 02:48:09 2022 by
 # waf 2.0.21 (abi 20, python 3080af0 on linux)
 # using ./waf configure
 #
@@ -817,79 +817,24 @@ LDVERSION = '3.8'
 
 ------------------------------------------------------
 python-config
-not found
-find program=['/usr/bin/python3-config', 'python3.8-config', 'python-config-3.8', 'python3.8m-config'] paths=['/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='PYTHON_CONFIG' -> None
-from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/bindings/python: Could not find the program ['/usr/bin/python3-config', 'python3.8-config', 'python-config-3.8', 'python3.8m-config']
+/usr/bin/python3-config
+find program=['/usr/bin/python3-config', 'python3.8-config', 'python-config-3.8', 'python3.8m-config'] paths=['/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='PYTHON_CONFIG' -> ['/usr/bin/python3-config']
+--------------------------------------------------------------------------
+Asking python-config for pyembed '--cflags --libs --ldflags --embed' flags
+['/usr/bin/python3-config', '--cflags', '--libs', '--ldflags', '--embed']
+out: -I/usr/include/python3.8 -I/usr/include/python3.8  -Wno-unused-result -Wsign-compare -g -fdebug-prefix-map=/build/python3.8-4OrTnN/python3.8-3.8.10=. -specs=/usr/share/dpkg/no-pie-compile.specs -fstack-protector -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O3 -Wall
+-lpython3.8 -lcrypt -lpthread -ldl  -lutil -lm -lm 
+-L/usr/lib/python3.8/config-3.8-x86_64-linux-gnu -L/usr/lib -lpython3.8 -lcrypt -lpthread -ldl  -lutil -lm -lm 
+
 Unhandled flag '-Wno-unused-result'
 Unhandled flag '-Wsign-compare'
-Unhandled flag '-Wall'
+Unhandled flag '-specs=/usr/share/dpkg/no-pie-compile.specs'
 Unhandled flag '-Wformat'
 Unhandled flag '-Werror=format-security'
-Unhandled flag 'x86_64-linux-gnu-gcc'
-Unhandled flag '-shared'
-Unhandled flag '-Wno-unused-result'
-Unhandled flag '-Wsign-compare'
 Unhandled flag '-Wall'
-Unhandled flag '-Wformat'
-Unhandled flag '-Werror=format-security'
-
-
-# try again with -L$python_LIBDIR: ['/usr/lib']
-
-------------------------------------------------------
-Checking for library python3.8 in LIBDIR
-==>
-
-int main(int argc, char **argv) {
-	(void)argc; (void)argv;
-	return 0;
-}
-
-<==
-[1/2] Compiling [32mbuild/.conf_check_3af0f755bb3db8d2a81130ceffb51915/test.cpp[0m
-
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-g', '-fwrapv', '-O2', '-g', '-fwrapv', '-O2', '-g', '-fstack-protector-strong', '-g', '-fwrapv', '-O2', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python3/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python3/dist-packages"', '-DNDEBUG', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_3af0f755bb3db8d2a81130ceffb51915/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_3af0f755bb3db8d2a81130ceffb51915/testbuild/testprog[0m
-
-['/usr/bin/g++', '-Wl,-Bsymbolic-functions', '-Wl,-z,relro', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_3af0f755bb3db8d2a81130ceffb51915/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-L/usr/lib', '-lpython3.8']
-err: /usr/bin/ld: cannot find -lpython3.8
-collect2: error: ld returned 1 exit status
-
-from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/bindings/python: Test does not build: Traceback (most recent call last):
-  File "/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/.waf3-2.0.21-c6c9a875365426e5928462b9b74d40b5/waflib/Configure.py", line 335, in run_build
-    bld.compile()
-  File "/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/.waf3-2.0.21-c6c9a875365426e5928462b9b74d40b5/waflib/Build.py", line 176, in compile
-    raise Errors.BuildError(self.producer.error)
-waflib.Errors.BuildError: Build failed
- -> task in 'testprog' failed with exit status 1 (run with -v to display more information)
-
-not found
-from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/bindings/python: The configuration failed
-
-
-# try again with -L$python_LIBPL (some systems don't install the python library in $prefix/lib)
-
-------------------------------------------------------
-Checking for library python3.8 in python_LIBPL
-==>
-
-int main(int argc, char **argv) {
-	(void)argc; (void)argv;
-	return 0;
-}
-
-<==
-[1/2] Compiling [32mbuild/.conf_check_c7e435fa6d76f0716b37907f3044e976/test.cpp[0m
-
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-g', '-fwrapv', '-O2', '-g', '-fwrapv', '-O2', '-g', '-fstack-protector-strong', '-g', '-fwrapv', '-O2', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python3/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python3/dist-packages"', '-DNDEBUG', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_c7e435fa6d76f0716b37907f3044e976/testbuild/test.cpp.1.o']
-[2/2] Linking [33mbuild/.conf_check_c7e435fa6d76f0716b37907f3044e976/testbuild/testprog[0m
-
-['/usr/bin/g++', '-Wl,-Bsymbolic-functions', '-Wl,-z,relro', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_c7e435fa6d76f0716b37907f3044e976/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-L/usr/lib/python3.8/config-3.8-x86_64-linux-gnu', '-lpython3.8']
 yes
-Include path for Python extensions (found via distutils module): '/usr/include/python3.8'
-
-------------------------------------------------------
-Checking for header Python.h
+--------------------------------------------------------------------------
+Testing pyembed configuration
 ==>
 
 #include <Python.h>
@@ -910,13 +855,128 @@ int main(int argc, char **argv)
 }
 
 <==
-[1/2] Compiling [32mbuild/.conf_check_387bc7e7dd23321a630066a3497dbdd4/test.cpp[0m
+[1/2] Compiling [32mbuild/.conf_check_b367436918f7cae05acae23362c521b8/test.cpp[0m
 
-['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-g', '-fwrapv', '-O2', '-g', '-fwrapv', '-O2', '-g', '-fstack-protector-strong', '-g', '-fwrapv', '-O2', '-fno-strict-aliasing', '-I/usr/include/python3.8', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python3/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python3/dist-packages"', '-DNDEBUG', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_387bc7e7dd23321a630066a3497dbdd4/testbuild/test.cpp.1.o']
-err: ../test.cpp:2:10: fatal error: Python.h: No such file or directory
-    2 | #include <Python.h>
-      |          ^~~~~~~~~~
-compilation terminated.
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-g', '-fdebug-prefix-map=/build/python3.8-4OrTnN/python3.8-3.8.10=.', '-fstack-protector', '-g', '-fwrapv', '-O3', '-I/usr/include/python3.8', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python3/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python3/dist-packages"', '-DNDEBUG', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_b367436918f7cae05acae23362c521b8/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_b367436918f7cae05acae23362c521b8/testbuild/testprog[0m
+
+['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_b367436918f7cae05acae23362c521b8/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-L/usr/lib/python3.8/config-3.8-x86_64-linux-gnu', '-L/usr/lib', '-lpython3.8', '-lcrypt', '-lpthread', '-ldl', '-lutil', '-lm', '-lm', '-lpython3.8', '-lcrypt', '-lpthread', '-ldl', '-lutil', '-lm', '-lm']
+yes
+--------------------------------------------------------------------------
+Asking python-config for pyext '--cflags --libs --ldflags' flags
+['/usr/bin/python3-config', '--cflags', '--libs', '--ldflags']
+out: -I/usr/include/python3.8 -I/usr/include/python3.8  -Wno-unused-result -Wsign-compare -g -fdebug-prefix-map=/build/python3.8-4OrTnN/python3.8-3.8.10=. -specs=/usr/share/dpkg/no-pie-compile.specs -fstack-protector -Wformat -Werror=format-security  -DNDEBUG -g -fwrapv -O3 -Wall
+ -lcrypt -lpthread -ldl  -lutil -lm -lm 
+-L/usr/lib/python3.8/config-3.8-x86_64-linux-gnu -L/usr/lib  -lcrypt -lpthread -ldl  -lutil -lm -lm 
+
+Unhandled flag '-Wno-unused-result'
+Unhandled flag '-Wsign-compare'
+Unhandled flag '-specs=/usr/share/dpkg/no-pie-compile.specs'
+Unhandled flag '-Wformat'
+Unhandled flag '-Werror=format-security'
+Unhandled flag '-Wall'
+yes
+--------------------------------------------------------------------------
+Testing pyext configuration
+==>
+
+#include <Python.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+	void Py_Initialize(void);
+	void Py_Finalize(void);
+#ifdef __cplusplus
+}
+#endif
+int main(int argc, char **argv)
+{
+   (void)argc; (void)argv;
+   Py_Initialize();
+   Py_Finalize();
+   return 0;
+}
+
+<==
+[1/2] Compiling [32mbuild/.conf_check_66b724fcf417dea0fd77d12e509b70c6/test.cpp[0m
+
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-fPIC', '-g', '-fdebug-prefix-map=/build/python3.8-4OrTnN/python3.8-3.8.10=.', '-fstack-protector', '-g', '-fwrapv', '-O3', '-I/usr/include/python3.8', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python3/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python3/dist-packages"', '-DHAVE_PYEMBED=1', '-DNDEBUG', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_66b724fcf417dea0fd77d12e509b70c6/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_66b724fcf417dea0fd77d12e509b70c6/testbuild/testprog.cpython-38-x86_64-linux-gnu.so[0m
+
+['/usr/bin/g++', '-shared', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_66b724fcf417dea0fd77d12e509b70c6/testbuild/testprog.cpython-38-x86_64-linux-gnu.so', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-L/usr/lib/python3.8/config-3.8-x86_64-linux-gnu', '-L/usr/lib', '-lcrypt', '-lpthread', '-ldl', '-lutil', '-lm', '-lm', '-lcrypt', '-lpthread', '-ldl', '-lutil', '-lm', '-lm']
+yes
+--------------------------------------------------------------------------
+Checking for compilation flag -fvisibility=hidden support
+==>
+int main() { return 0; }
+<==
+[1/1] Compiling [32mbuild/.conf_check_040c0dd0eda912b8b29d7d1ce92ad6d6/test.cpp[0m
+
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-fvisibility=hidden', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python3/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python3/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_040c0dd0eda912b8b29d7d1ce92ad6d6/testbuild/test.cpp.1.o']
+ok
+--------------------------------------------------------------------------
+Checking for compilation flag -Wno-array-bounds support
+==>
+int main() { return 0; }
+<==
+[1/1] Compiling [32mbuild/.conf_check_040c0dd0eda912b8b29d7d1ce92ad6d6/test.cpp[0m
+
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-Wno-array-bounds', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python3/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python3/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_040c0dd0eda912b8b29d7d1ce92ad6d6/testbuild/test.cpp.1.o']
+ok
+--------------------------------------------------------------------------
+Checking for pybindgen location
+../pybindgen-0.22.0 (guessed)
+--------------------------------------------------------------------------
+Checking for python module 'pybindgen'
+['/usr/bin/python3', '-c', "\nimport pybindgen as current_module\nversion = getattr(current_module, '__version__', None)\nif version is not None:\n\tprint(str(version))\nelse:\n\tprint('unknown version')\n"]
+out: 0.22.0
+
+0.22.0
+--------------------------------------------------------------------------
+Checking for pybindgen version
+0.22.0
+--------------------------------------------------------------------------
+Checking for code snippet
+==>
+
+#include <stdint.h>
+#include <vector>
+
+int main ()
+{
+   std::vector< uint64_t > t = std::vector< unsigned long > ();
+   return 0;
+}
+
+<==
+[1/1] Compiling [32mbuild/.conf_check_3c4794929f224d1606d19026cf2e743a/test.cpp[0m
+
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python3/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python3/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_3c4794929f224d1606d19026cf2e743a/testbuild/test.cpp.1.o']
+yes
+--------------------------------------------------------------------------
+Checking for types uint64_t and unsigned long equivalence
+no
+--------------------------------------------------------------------------
+Checking for code snippet
+==>
+
+#include <stdint.h>
+#include <vector>
+
+int main ()
+{
+   std::vector< uint64_t > t = std::vector< unsigned long long > ();
+   return 0;
+}
+
+<==
+[1/1] Compiling [32mbuild/.conf_check_2dd1ea5fd6e3e98f803617848594785d/test.cpp[0m
+
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python3/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python3/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_2dd1ea5fd6e3e98f803617848594785d/testbuild/test.cpp.1.o']
+err: ../test.cpp: In function ‘int main()’:
+../test.cpp:7:37: error: conversion from ‘vector<long long unsigned int>’ to non-scalar type ‘vector<long unsigned int>’ requested
+    7 |    std::vector< uint64_t > t = std::vector< unsigned long long > ();
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/bindings/python: Test does not build: Traceback (most recent call last):
   File "/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/.waf3-2.0.21-c6c9a875365426e5928462b9b74d40b5/waflib/Configure.py", line 335, in run_build
@@ -926,16 +986,50 @@ from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/bindings/python: Test does 
 waflib.Errors.BuildError: Build failed
  -> task in 'testprog' failed with exit status 1 (run with -v to display more information)
 
-Distutils not installed? Broken python installation? Get python-config now!
+no
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/bindings/python: The configuration failed
-------------------------------------------------------
+--------------------------------------------------------------------------
+Checking for types uint64_t and unsigned long long equivalence
+yes
+--------------------------------------------------------------------------
+Checking for the apidefs that can be used for Python bindings
+gcc-LP64
+--------------------------------------------------------------------------
+Checking for internal GCC cxxabi
+==>
+
+# include <cxxabi.h>
+int main ()
+{
+   const abi::__si_class_type_info *_typeinfo  __attribute__((unused)) = NULL;
+   return 0;
+}
+
+<==
+[1/2] Compiling [32mbuild/.conf_check_5af17e5884d0f64b2a76385c930904ab/test.cpp[0m
+
+['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DPYTHONDIR="/usr/local/lib/python3/dist-packages"', '-DPYTHONARCHDIR="/usr/local/lib/python3/dist-packages"', '-DHAVE_PYEMBED=1', '-DHAVE_PYEXT=1', '-DHAVE_PYTHON_H=1', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_5af17e5884d0f64b2a76385c930904ab/testbuild/test.cpp.1.o']
+[2/2] Linking [33mbuild/.conf_check_5af17e5884d0f64b2a76385c930904ab/testbuild/testprog[0m
+
+['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_5af17e5884d0f64b2a76385c930904ab/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
+complete
+--------------------------------------------------------------------------
+Checking for python module 'pygccxml'
+['/usr/bin/python3', '-c', "\nimport pygccxml as current_module\nversion = getattr(current_module, '__version__', None)\nif version is not None:\n\tprint(str(version))\nelse:\n\tprint('unknown version')\n"]
+err: Traceback (most recent call last):
+  File "<string>", line 2, in <module>
+ModuleNotFoundError: No module named 'pygccxml'
+
+not found
+from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/bindings/python: Could not find the python module 'pygccxml'
+--------------------------------------------------------------------------
 Checking for click location
 not found
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for program 'pkg-config'
 /usr/bin/pkg-config
 find program=['pkg-config'] paths=['/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='PKGCONFIG' -> ['/usr/bin/pkg-config']
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for 'gtk+-3.0 >= 3.22'
 ['/usr/bin/pkg-config', '--cflags', '--libs', 'gtk+-3.0', '>=', '3.22']
 err: Package gtk+-3.0 was not found in the pkg-config search path.
@@ -945,7 +1039,7 @@ No package 'gtk+-3.0' found
 
 not found
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/src/config-store: The configuration failed
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for 'libxml-2.0 >= 2.7'
 ['/usr/bin/pkg-config', '--cflags', '--libs', 'libxml-2.0', '>=', '2.7']
 err: Package libxml-2.0 was not found in the pkg-config search path.
@@ -957,7 +1051,7 @@ not found
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/src/config-store: The configuration failed
 boost: core wants incs, required: False
 boost: core: no boost, but not required
-------------------------------------------------------
+--------------------------------------------------------------------------
 checking for uint128_t
 ==>
 
@@ -1001,7 +1095,7 @@ waflib.Errors.BuildError: Build failed
 
 not found
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/src/core: The configuration failed
-------------------------------------------------------
+--------------------------------------------------------------------------
 checking for __uint128_t
 ==>
 
@@ -1022,10 +1116,10 @@ checking for __uint128_t
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_9858f12ee3e8fd10ddbed7322e7f6d39/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking high precision implementation
 128-bit integer (default)
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header stdint.h
 ==>
 #include <stdint.h>
@@ -1043,7 +1137,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_78f27eb1cb7d718aa77ac6221c1170cb/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header inttypes.h
 ==>
 #include <inttypes.h>
@@ -1061,7 +1155,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_fc28ad0b265dbc0ea499b0019a3e29a9/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header sys/inttypes.h
 ==>
 #include <sys/inttypes.h>
@@ -1090,7 +1184,7 @@ waflib.Errors.BuildError: Build failed
 
 not found
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/src/core: The configuration failed
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header sys/types.h
 ==>
 #include <sys/types.h>
@@ -1108,7 +1202,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_8921d893cae40686018a1a0f274b919a/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header sys/stat.h
 ==>
 #include <sys/stat.h>
@@ -1126,7 +1220,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_35c3b87a09b47b232105a7d7cd0283a2/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header dirent.h
 ==>
 #include <dirent.h>
@@ -1144,7 +1238,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_42a2d945c05247460c5b0f87cb6870b7/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header signal.h
 ==>
 #include <signal.h>
@@ -1162,7 +1256,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_4ecf044f3ad7de926ece45637d37a7c2/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header pthread.h
 ==>
 
@@ -1182,7 +1276,7 @@ int main ()
 
 ['/usr/bin/g++', '-pthread', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_540e61053391cd4cb697e5746d5ea1e2/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header stdint.h
 ==>
 #include <stdint.h>
@@ -1200,7 +1294,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_78f27eb1cb7d718aa77ac6221c1170cb/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header inttypes.h
 ==>
 #include <inttypes.h>
@@ -1218,7 +1312,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_fc28ad0b265dbc0ea499b0019a3e29a9/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header sys/inttypes.h
 ==>
 #include <sys/inttypes.h>
@@ -1247,7 +1341,7 @@ waflib.Errors.BuildError: Build failed
 
 not found
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/src/core: The configuration failed
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for library rt
 ==>
 
@@ -1264,7 +1358,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', '-pthread', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_2b334598ad55df9c966dac32c87d3c5d/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic', '-lrt']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header sys/ioctl.h
 ==>
 #include <sys/ioctl.h>
@@ -1282,7 +1376,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_72d93051ebaa6b5f9d463e7096461b0c/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header net/if.h
 ==>
 #include <net/if.h>
@@ -1300,7 +1394,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_10ae9c9b4244c33b19dacb103f33468c/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header net/ethernet.h
 ==>
 #include <net/ethernet.h>
@@ -1318,7 +1412,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_02eff9a880d4ef695f1f39407f17941c/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for 'libdpdk'
 ['/usr/bin/pkg-config', '--cflags', '--libs', 'libdpdk']
 err: Package libdpdk was not found in the pkg-config search path.
@@ -1328,7 +1422,7 @@ No package 'libdpdk' found
 
 not found
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/src/fd-net-device: The configuration failed
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header linux/if_tun.h
 ==>
 #include <linux/if_tun.h>
@@ -1346,7 +1440,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_84bde5bf7ffe777dad5df813b93837c2/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header netpacket/packet.h
 ==>
 #include <netpacket/packet.h>
@@ -1364,7 +1458,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_b65f599c2de3a80c907eb8b7100968be/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header net/netmap_user.h
 ==>
 #include <net/netmap_user.h>
@@ -1393,13 +1487,13 @@ waflib.Errors.BuildError: Build failed
 
 not found
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/src/fd-net-device: The configuration failed
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for NSC location
 not found
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for OpenFlow location
 not found
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for 'sqlite3'
 ['/usr/bin/pkg-config', '--cflags', '--libs', 'sqlite3']
 err: Package sqlite3 was not found in the pkg-config search path.
@@ -1409,7 +1503,7 @@ No package 'sqlite3' found
 
 not found
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/src/stats: The configuration failed
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header semaphore.h
 ==>
 #include <semaphore.h>
@@ -1427,7 +1521,7 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_c37efbb515ef25356eb075829fe2daf9/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for header linux/if_tun.h
 ==>
 #include <linux/if_tun.h>
@@ -1445,16 +1539,75 @@ int main(int argc, char **argv) {
 
 ['/usr/bin/g++', 'test.cpp.1.o', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_84bde5bf7ffe777dad5df813b93837c2/testbuild/testprog', '-Wl,-Bstatic', '-Wl,-Bdynamic']
 yes
-------------------------------------------------------
+--------------------------------------------------------------------------
+Checking for python module 'gi'
+['/usr/bin/python3', '-c', "\nimport gi as current_module\nversion = getattr(current_module, '__version__', None)\nif version is not None:\n\tprint(str(version))\nelse:\n\tprint('unknown version')\n"]
+out: 3.36.0
+
+3.36.0
+--------------------------------------------------------------------------
+Checking for python module 'gi.repository.GObject'
+['/usr/bin/python3', '-c', "\nimport gi.repository.GObject as current_module\nversion = getattr(current_module, '__version__', None)\nif version is not None:\n\tprint(str(version))\nelse:\n\tprint('unknown version')\n"]
+out: unknown version
+
+ok
+--------------------------------------------------------------------------
+Checking for python module 'cairo'
+['/usr/bin/python3', '-c', "\nimport cairo as current_module\nversion = getattr(current_module, '__version__', None)\nif version is not None:\n\tprint(str(version))\nelse:\n\tprint('unknown version')\n"]
+out: unknown version
+
+ok
+--------------------------------------------------------------------------
+Checking for python module 'pygraphviz'
+['/usr/bin/python3', '-c', "\nimport pygraphviz as current_module\nversion = getattr(current_module, '__version__', None)\nif version is not None:\n\tprint(str(version))\nelse:\n\tprint('unknown version')\n"]
+out: 1.5
+
+1.5
+--------------------------------------------------------------------------
+Checking for python module 'gi.repository.Gtk'
+['/usr/bin/python3', '-c', "\nimport gi.repository.Gtk as current_module\nversion = getattr(current_module, '__version__', None)\nif version is not None:\n\tprint(str(version))\nelse:\n\tprint('unknown version')\n"]
+out: unknown version
+
+err: <string>:2: PyGIWarning: Gtk was imported without specifying a version first. Use gi.require_version('Gtk', '3.0') before import to ensure that the right version gets loaded.
+
+ok
+--------------------------------------------------------------------------
+Checking for python module 'gi.repository.Gdk'
+['/usr/bin/python3', '-c', "\nimport gi.repository.Gdk as current_module\nversion = getattr(current_module, '__version__', None)\nif version is not None:\n\tprint(str(version))\nelse:\n\tprint('unknown version')\n"]
+out: unknown version
+
+err: <string>:2: PyGIWarning: Gdk was imported without specifying a version first. Use gi.require_version('Gdk', '3.0') before import to ensure that the right version gets loaded.
+
+ok
+--------------------------------------------------------------------------
+Checking for python module 'gi.repository.Pango'
+['/usr/bin/python3', '-c', "\nimport gi.repository.Pango as current_module\nversion = getattr(current_module, '__version__', None)\nif version is not None:\n\tprint(str(version))\nelse:\n\tprint('unknown version')\n"]
+out: unknown version
+
+err: <string>:2: PyGIWarning: Pango was imported without specifying a version first. Use gi.require_version('Pango', '1.0') before import to ensure that the right version gets loaded.
+
+ok
+--------------------------------------------------------------------------
+Checking for python module 'gi.repository.GooCanvas'
+['/usr/bin/python3', '-c', "\nimport gi.repository.GooCanvas as current_module\nversion = getattr(current_module, '__version__', None)\nif version is not None:\n\tprint(str(version))\nelse:\n\tprint('unknown version')\n"]
+err: Traceback (most recent call last):
+  File "<string>", line 2, in <module>
+  File "/usr/lib/python3/dist-packages/gi/importer.py", line 132, in load_module
+    raise ImportError('cannot import name %s, '
+ImportError: cannot import name GooCanvas, introspection typelib not found
+
+not found
+from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/src/visualizer: Could not find the python module 'gi.repository.GooCanvas'
+--------------------------------------------------------------------------
 Checking for program 'sudo'
 /usr/bin/sudo
 find program=['sudo'] paths=['/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='SUDO' -> ['/usr/bin/sudo']
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for program 'valgrind'
 not found
 find program=['valgrind'] paths=['/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='VALGRIND' -> None
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35: Could not find the program ['valgrind']
-------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for 'gsl'
 ['/usr/bin/pkg-config', '--cflags', '--libs', 'gsl']
 err: Package gsl was not found in the pkg-config search path.
@@ -1464,12 +1617,12 @@ No package 'gsl' found
 
 not found
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35: The configuration failed
-------------------------------------------------------
+--------------------------------------------------------------------------
 libgcrypt-config
 not found
 find program=['libgcrypt-config'] paths=['/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='LIBGCRYPT_CONFIG' -> None
 from /home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35: Could not find the program ['libgcrypt-config']
--------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for compilation flag -fstrict-aliasing support
 ==>
 int main() { return 0; }
@@ -1478,7 +1631,7 @@ int main() { return 0; }
 
 ['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-fstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_SEMAPHORE_H=1', '-DHAVE_IF_TUN_H=1', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_040c0dd0eda912b8b29d7d1ce92ad6d6/testbuild/test.cpp.1.o']
 ok
--------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for compilation flag -fstrict-aliasing support
 ==>
 int main() { return 0; }
@@ -1487,7 +1640,7 @@ int main() { return 0; }
 
 ['/usr/bin/gcc', '-fstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_SEMAPHORE_H=1', '-DHAVE_IF_TUN_H=1', '../test.c', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_bbeb304d122cb8cef475215642c54663/testbuild/test.c.1.o']
 ok
--------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for compilation flag -Wstrict-aliasing support
 ==>
 int main() { return 0; }
@@ -1496,7 +1649,7 @@ int main() { return 0; }
 
 ['/usr/bin/g++', '-O0', '-ggdb', '-g3', '-Wall', '-Werror', '-std=c++17', '-fstrict-aliasing', '-Wstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_SEMAPHORE_H=1', '-DHAVE_IF_TUN_H=1', '../test.cpp', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_040c0dd0eda912b8b29d7d1ce92ad6d6/testbuild/test.cpp.1.o']
 ok
--------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for compilation flag -Wstrict-aliasing support
 ==>
 int main() { return 0; }
@@ -1505,7 +1658,7 @@ int main() { return 0; }
 
 ['/usr/bin/gcc', '-Wstrict-aliasing', '-DNS3_BUILD_PROFILE_DEBUG', '-DNS3_ASSERT_ENABLE', '-DNS3_LOG_ENABLE', '-DHAVE_SYS_IOCTL_H=1', '-DHAVE_IF_NETS_H=1', '-DHAVE_NET_ETHERNET_H=1', '-DHAVE_PACKET_H=1', '-DHAVE_SEMAPHORE_H=1', '-DHAVE_IF_TUN_H=1', '../test.c', '-c', '-o/home/naeem/CSE322/NS3/ns-allinone-3.35/ns-3.35/build/.conf_check_bbeb304d122cb8cef475215642c54663/testbuild/test.c.1.o']
 ok
--------------------------------------------------------
+--------------------------------------------------------------------------
 Checking for program 'doxygen'
 not found
 find program=['doxygen'] paths=['/usr/local/sbin', '/usr/local/bin', '/usr/sbin', '/usr/bin', '/sbin', '/bin', '/usr/games', '/usr/local/games', '/snap/bin'] var='DOXYGEN' -> None
